@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///F:/Next%20Js%20Projects/PhpTravel%20MUI/my-app/src/app/page.js"],"sourcesContent":["import Box from '@mui/material/Box';\nimport { ThemeProvider } from '@mui/material/styles';\n\nexport default function BoxSx() {\n  return (\n    <ThemeProvider\n      theme={{\n        palette: {\n          primary: {\n            main: '#007FFF',\n            dark: '#0066CC',\n          },\n        },\n      }}\n    >\n      <Box\n        sx={{\n          width: 100,\n          height: 100,\n          borderRadius: 1,\n          bgcolor: 'primary.main',\n          '&:hover': {\n            bgcolor: 'primary.dark',\n          },\n        }}\n      />\n    </ThemeProvider>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAA;AACA;;;;AAEe,SAAS;IACtB,qBACE,2PAAC,gOAAa;QACZ,OAAO;YACL,SAAS;gBACP,SAAS;oBACP,MAAM;oBACN,MAAM;gBACR;YACF;QACF;kBAEA,cAAA,2PAAC,iKAAG;YACF,IAAI;gBACF,OAAO;gBACP,QAAQ;gBACR,cAAc;gBACd,SAAS;gBACT,WAAW;oBACT,SAAS;gBACX;YACF;;;;;;;;;;;AAIR"}}]
+}

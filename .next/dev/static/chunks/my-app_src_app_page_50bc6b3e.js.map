@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///F:/Next%20Js%20Projects/PhpTravel%20MUI/my-app/src/app/page.js"],"sourcesContent":["\"use client\";\nimport Header from \"@/component/Header\";\n\n\nexport default function Home() {\n  return (\n    <div>\n     <Header/>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;;;;;;AAAA;;;AAIe,SAAS;IACtB,qBACE,0MAAC;kBACA,cAAA,0MAAC;;;;;;;;;;AAGN;KANwB"}}]
+}

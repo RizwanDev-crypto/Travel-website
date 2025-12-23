@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///F:/Next%20Js%20Projects/PhpTravel%20MUI/my-app/src/app/layout.js"],"sourcesContent":["\"use client\";\nimport { CssBaseline } from \"@mui/material\";\n\nexport default function RootLayout({ children }) {\n  return (\n    <html lang=\"en\">\n      <body>\n        <CssBaseline />\n        {children}\n      </body>\n    </html>\n  );\n}\n"],"names":[],"mappings":";;;;;AACA;AADA;;;AAGe,SAAS,WAAW,EAAE,QAAQ,EAAE;IAC7C,qBACE,2PAAC;QAAK,MAAK;kBACT,cAAA,2PAAC;;8BACC,2PAAC,+NAAW;;;;;gBACX;;;;;;;;;;;;AAIT"}}]
+}

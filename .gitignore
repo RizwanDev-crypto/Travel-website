@@ -1,0 +1,9 @@
+# Check if .gitignore exists and has correct content
+cat .gitignore
+
+# Agar sahi nahi hai to update karein
+"node_modules/" | Out-File .gitignore -Encoding UTF8
+".next/" | Out-File .gitignore -Encoding UTF8 -Append
+".env*" | Out-File .gitignore -Encoding UTF8 -Append
+"*.log" | Out-File .gitignore -Encoding UTF8 -Append
+node_modules

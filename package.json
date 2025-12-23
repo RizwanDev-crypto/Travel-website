@@ -1,15 +1,22 @@
 {
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@fontsource/roboto": "^5.2.9",
-    "@mui/icons-material": "^7.3.6",
-    "@mui/material": "^7.3.6",
-    "@mui/styled-engine-sc": "^7.3.6",
-    "@mui/x-date-pickers": "^8.22.0",
-    "date-fns": "^4.1.0",
-    "dayjs": "^1.11.19",
-    "lucide-react": "^0.556.0",
-    "styled-components": "^6.1.19"
+    "next": "16.0.8",
+    "react": "19.2.1",
+    "react-dom": "19.2.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.8",
+    "tailwindcss": "^4"
   }
 }
