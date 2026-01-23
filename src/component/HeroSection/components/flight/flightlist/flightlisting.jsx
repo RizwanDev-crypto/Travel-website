@@ -17,6 +17,8 @@ import {
   MenuItem
 } from "@mui/material";
 import FlightDetails from "./FlightDetails";
+import BaggageSelection from "./BaggageSelection";
+import FlightBooking from "../FlightBooking/FlightBooking";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FlightIcon from "@mui/icons-material/Flight";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
@@ -28,98 +30,25 @@ import FlightFilters from "./FlightFilters";
 
 
 
-// Main flights data array
-const flightsData = [
-  {
-    id: 1,
-    airline: "Qatar Airways",
-    airlineShort: "QA",
-    flightNumber: "0552",
-    departureTime: "05:42 pm",
-    arrivalTime: "08:35 pm",
-    from: "LAS",
-    to: "SEA",
-    duration: "2:53",
-    stops: 1,
-    price: "USD 925.98",
-    cabin: "economy",
-    baggage: "7 kg",
-    checkinBaggage: "23 kg",
-    departureDate: "09-01-2026",
-    arrivalDate: "09-01-2026",
-    departureAirport: "Harry Reid International Airport",
-    arrivalAirport: "Seattle-Tacoma International Airport",
-    fareRules: {
-      cancellation: "Non-refundable",
-      changes: "Date changes subject to availability and fees"
-    }
-  },
-  {
-    id: 2,
-    airline: "Emirates ",
-    airlineShort: "EK",
-    flightNumber: "203",
-    departureTime: "10:30 am",
-    arrivalTime: "11:45 pm",
-    from: "DXB",
-    to: "JFK",
-    duration: "14:15",
-    stops: 0,
-    price: "USD 1200.50",
-    cabin: "business",
-    baggage: "12 kg",
-    checkinBaggage: "40 kg",
-    departureDate: "15-01-2026",
-    arrivalDate: "15-01-2026",
-    departureAirport: "Dubai International Airport",
-    arrivalAirport: "John F. Kennedy International Airport",
-    fareRules: {
-      cancellation: "Partially refundable",
-      changes: "Changes allowed with fee"
-    }
-  },
-  {
-    id: 3,
-    airline: "Qatar Airways",
-    airlineShort: "QR",
-    flightNumber: "701",
-    departureTime: "02:15 pm",
-    arrivalTime: "08:30 am",
-    from: "DOH",
-    to: "LHR",
-    duration: "7:15",
-    stops: 0,
-    price: "USD 850.75",
-    cabin: "premium-economy",
-    baggage: "10 kg",
-    checkinBaggage: "30 kg",
-    departureDate: "12-01-2026",
-    arrivalDate: "13-01-2026",
-    departureAirport: "Hamad International Airport",
-    arrivalAirport: "Heathrow Airport",
-    fareRules: {
-      cancellation: "Refundable with penalty",
-      changes: "Free changes up to 24 hours before departure"
-    }
-  }
-];
-
-// ✅ Function to format date for input fields
-const formatDateForInput = (dateString) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toISOString().split('T')[0];
-};
-
 export default function Flightlisting({ slug = [] }) {
   const { flightSearchData, setSelectedFlight } = useGlobalContext();
   const [isLoading, setIsLoading] = useState(true);
+  const [flights, setFlights] = useState([]);
+  const [flightNumberFilter, setFlightNumberFilter] = useState("");
+  const [priceRange, setPriceRange] = useState([425, 10000]);
+  const [selectedStops, setSelectedStops] = useState([]);
+  const [selectedAirlines, setSelectedAirlines] = useState([]);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState([]); // ✅ Added time slots state
   const [expandedCardId, setExpandedCardId] = useState(null);
   const [selectedFlightData, setSelectedFlightData] = useState(null);
   const [localStorageData, setLocalStorageData] = useState(null);
   const [showFlightSearchForm, setShowFlightSearchForm] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [sortLabel, setSortLabel] = useState("Price: Low to High");
+  const [showBaggageSelection, setShowBaggageSelection] = useState(null); // Track which flight shows baggage selection
+  const [showBookingForm, setShowBookingForm] = useState(false); // Track if booking form should be shown
+  const [selectedBaggageOption, setSelectedBaggageOption] = useState(null); // Track selected baggage option
+  const [visibleFlights, setVisibleFlights] = useState(10); // ✅ Added pagination state
 
   const openSort = Boolean(anchorEl);
   const handleSortClick = (event) => {
@@ -131,6 +60,25 @@ export default function Flightlisting({ slug = [] }) {
     }
     setAnchorEl(null);
   };
+
+  // ✅ Fetch flights from API
+  useEffect(() => {
+    const fetchFlights = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/flights');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setFlights(data);
+      } catch (error) {
+        console.error("Error fetching flights:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFlights();
+  }, []);
 
   // ✅ Load data from localStorage on component mount
   useEffect(() => {
@@ -149,7 +97,6 @@ export default function Flightlisting({ slug = [] }) {
         console.error("❌ Error parsing localStorage data:", error);
       }
     }
-    setIsLoading(false); // ✅ IMPORTANT: Loading false kar do
   }, []);
 
   // Use data from global state
@@ -164,12 +111,77 @@ export default function Flightlisting({ slug = [] }) {
       setExpandedCardId(null);
       setSelectedFlightData(null);
       setSelectedFlight(null);
+      setShowBaggageSelection(null); // Hide baggage selection when collapsing
     } else {
       setExpandedCardId(flight.id);
       setSelectedFlightData(flight);
       setSelectedFlight(flight);
+      setShowBaggageSelection(null); // Reset baggage selection to show FlightDetails first
     }
   };
+
+  const handleBookNow = (flight) => {
+    setExpandedCardId(flight.id);
+    setSelectedFlightData(flight);
+    setSelectedFlight(flight);
+    setShowBaggageSelection(flight.id); // Show baggage selection for this flight
+  };
+
+  const handleBaggageSelect = (option) => {
+    console.log("Selected baggage option:", option);
+    setSelectedBaggageOption(option);
+    setShowBookingForm(true);
+    // Hide other sections
+    setShowBaggageSelection(null);
+    setExpandedCardId(null);
+  };
+
+  // ✅ Combined Filtering & Sorting Logic
+  const filteredFlights = flights
+    .filter(flight => {
+      // Flight Number Filter
+      const matchesFlightNumber = flight.flightNumber.toLowerCase().includes(flightNumberFilter.toLowerCase());
+      
+      // Price Filter
+      const priceValue = parseFloat(flight.price.replace(/[^\d.]/g, ''));
+      const matchesPrice = priceValue >= priceRange[0] && priceValue <= priceRange[1];
+
+      // Stops Filter
+      const matchesStops = selectedStops.length === 0 || 
+        (selectedStops.includes("Direct") && flight.stops === 0) ||
+        (selectedStops.includes("1 Stop") && flight.stops === 1) ||
+        (selectedStops.includes("2+ Stops") && flight.stops >= 2);
+
+      // Airlines Filter
+      const matchesAirline = selectedAirlines.length === 0 || selectedAirlines.includes(flight.airline);
+
+      // Time Slot Filter
+      const matchesTime = selectedTimeSlots.length === 0 || selectedTimeSlots.some(slot => {
+        const time = flight.departureTime.toLowerCase();
+        const isPM = time.includes('pm');
+        let [hours] = time.replace(/[^\d:]/g, '').split(':').map(Number);
+        if (isPM && hours < 12) hours += 12;
+        if (!isPM && hours === 12) hours = 0;
+
+        if (slot === "Early Morning") return hours >= 0 && hours < 6;
+        if (slot === "Morning") return hours >= 6 && hours < 12;
+        if (slot === "Afternoon") return hours >= 12 && hours < 18;
+        if (slot === "Evening") return hours >= 18 && hours < 24;
+        return false;
+      });
+
+      return matchesFlightNumber && matchesPrice && matchesStops && matchesAirline && matchesTime;
+    })
+    .sort((a, b) => {
+      // Apply sorting based on sortLabel
+      const priceA = parseFloat(a.price.replace(/[^\d.]/g, ''));
+      const priceB = parseFloat(b.price.replace(/[^\d.]/g, ''));
+      
+      if (sortLabel === "Price: Low to High") return priceA - priceB;
+      if (sortLabel === "Price: High to Low") return priceB - priceA;
+      // You can add more sorting logic for Duration and Departure Time here
+      return 0;
+    });
 
   // Loading State - Animated Loader
   if (isLoading) {
@@ -250,10 +262,20 @@ export default function Flightlisting({ slug = [] }) {
         mx: "auto",
         bgcolor: "white",   
       }}>
-        <FlightSearchForm  />
+        <FlightSearchForm calendarWidth={{ xs: "100%", md: 172, lg: 233, xl: 232 }} />
       </Box>
 
-      {/* Main Layout: Filters (Left) + Cards (Right) */}
+      {/* Main Layout: Filters (Left) + Cards (Right) OR Booking Form */}
+      {showBookingForm ? (
+        <FlightBooking 
+          flight={selectedFlightData}
+          selectedBaggage={selectedBaggageOption}
+          adults={adults}
+          children={children}
+          infants={infants}
+          onBack={() => setShowBookingForm(false)}
+        />
+      ) : (
       <Box sx={{ 
         display: "flex", 
         alignItems: "flex-start",
@@ -268,7 +290,20 @@ export default function Flightlisting({ slug = [] }) {
           flexShrink: 0,
           mb: { xs: 2, sm: 0, md: 0, lg: 0 }
         }}>
-          <FlightFilters />
+          <FlightFilters 
+            flightCount={filteredFlights.length} 
+            flightNumberFilter={flightNumberFilter}
+            onFlightNumberChange={setFlightNumberFilter}
+            priceRange={priceRange}
+            onPriceChange={setPriceRange}
+            selectedStops={selectedStops}
+            onStopsChange={setSelectedStops}
+            selectedAirlines={selectedAirlines}
+            onAirlinesChange={setSelectedAirlines}
+            airlinesList={[...new Set(flights.map(f => f.airline))]}
+            selectedTimeSlots={selectedTimeSlots}
+            onTimeSlotChange={setSelectedTimeSlots}
+          />
         </Box>
 
       
@@ -301,7 +336,7 @@ export default function Flightlisting({ slug = [] }) {
               gap: 1 
             }}>
               <Typography sx={{ fontSize: { xs: "0.65rem", sm: "0.7rem", md: "0.7rem", lg: "0.7rem" }, fontWeight: 700, color:"#1F2937" }}>
-                {flightsData.length} Flights
+                {flights.length} Flights
               </Typography>
               <Typography variant="caption" sx={{ color: "rgb(75 85 99 / var(--tw-text-opacity, 1))", fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.8rem", lg: "0.8rem" } }}>
                 Found from 2 Supplier(s)
@@ -378,8 +413,8 @@ export default function Flightlisting({ slug = [] }) {
           </Box>
 
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {/* Map through flights data */}
-            {flightsData.map((flight) => (
+            {/* Map through filtered flights data */}
+            {filteredFlights.slice(0, visibleFlights).map((flight) => (
               <Paper
                 key={flight.id}
                 elevation={0}
@@ -405,44 +440,52 @@ export default function Flightlisting({ slug = [] }) {
             <Box
               sx={{
                 display: "flex",
-                alignItems: { xs: "flex-start", sm: "center", md: "center", lg: "center" },
+                alignItems: { xs: "center", sm: "center", md: "center", lg: "center" },
                 justifyContent: "space-between",
                 flexDirection: { xs: "column", sm: "row", md: "row", lg: "row" },
-                flexWrap: { xs: "nowrap", sm: "wrap", md: "wrap", lg: "wrap" },
-                gap: { xs: 1, sm: 1.5, md: 1.5, lg: 1.5 }
+                gap: { xs: 4, sm: 2, md: 2, lg: 2 }
               }}
             >
               {/* Airline Info */}
               <Box sx={{ 
                 display: "flex", 
-                flexDirection: { xs: "column", sm: "column", md: "column", lg: "column" }, 
-                alignItems: { xs: "center", sm: "flex-start", md: "flex-start", lg: "flex-start" }, 
-                gap: 1, 
-                minWidth: { xs: "auto", sm: 80, md: 80, lg: 80 },
-                width: { xs: "100%", sm: "auto", md: "auto", lg: "auto" },
-                justifyContent: { xs: "center", sm: "flex-start", md: "flex-start", lg: "flex-start" }
+                flexDirection: { xs: "column", sm: "row" },
+                alignItems: "center", 
+                gap: 1.5, 
+                width: { xs: "100%", sm: 130, md: 130, lg: 150 }, // Fixed width across all cards
+                flexShrink: 0,
+                justifyContent: { xs: "center", sm: "flex-start" }
               }}>
                   <Box
                     sx={{
-                      width: 40,
-                      height: 40,
+                      width: 36,
+                      height: 36,
                       bgcolor: "#F3F4F6",
                       borderRadius: 1.5,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      border: "1px solid #E5E7EB"
+                      border: "1px solid #E5E7EB",
+                      flexShrink: 0
                     }}
                   >
-                  <Typography variant="caption" sx={{ color: "#0c2e57ff", fontStyle: "italic", fontSize: "0.7rem"}}>
+                  <Typography variant="caption" sx={{ color: "#0c2e57ff", fontStyle: "italic", fontSize: "0.65rem"}}>
                     {flight.airlineShort}
                   </Typography>
                 </Box>
-                <Box sx={{ textAlign: { xs: "center", sm: "left" } }}>
-                  <Typography sx={{ fontWeight: 600, fontSize: "0.75rem", lineHeight: 1.2, color:"rgb(17 24 39 / var(--tw-text-opacity, 1))" }}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ 
+                    fontWeight: 600, 
+                    fontSize: "0.75rem", 
+                    lineHeight: 1.2, 
+                    color: "rgb(17 24 39)",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis" // Prevents shifting
+                  }}>
                     {flight.airline}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: "#6B7280", fontWeight: 600,fontSize: "0.6rem", display: "block", textAlign: "left"  }}>
+                  <Typography sx={{ color: "#6B7280", fontWeight: 600, fontSize: "0.6rem", display: "block" }}>
                     {flight.flightNumber}
                   </Typography>
                 </Box>
@@ -453,110 +496,122 @@ export default function Flightlisting({ slug = [] }) {
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: { xs: 1, sm: 2, md: 2, lg: 2 },
+                  gap: { xs: 1, sm: 2, md: 2, lg: 3 },
                   flex: 1,
-                  justifyContent: "center",
-                  width: { xs: "100%", sm: "auto", md: "auto", lg: "auto" },
-                  flexWrap: { xs: "nowrap", sm: "nowrap", md: "nowrap", lg: "nowrap" },
-                  my: { xs: 1, sm: 0, md: 0, lg: 0 }
+                  justifyContent: "center", // This stays perfectly centered
+                  minWidth: 0,
                 }}
               >
                 {/* Departure */}
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography sx={{ fontSize: "0.7rem",color:"#1F2937" }}>
+                <Box sx={{ textAlign: "right", minWidth: 60 }}>
+                  <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: "#1F2937" }}>
                     {flight.departureTime}
                   </Typography>
-                  <Typography sx={{ my: 0, color:"rgb(55 65 81 / var(--tw-text-opacity, 1))",fontWeight:"600", fontSize: "0.7rem" }}>{flight.from}</Typography>
-                  <Typography variant="caption" sx={{ color: "#6B7280", fontSize: "0.6rem" }}>
-                    {flight.departureDate}
-                  </Typography>
+                  <Typography sx={{ color: "#4B5563", fontWeight: 600, fontSize: "0.7rem" }}>{flight.from}</Typography>
                 </Box>
 
                 {/* Arrow & Duration */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, position: "relative", minWidth: "130px" }}>
-                  <FlightTakeoffIcon sx={{ color: "#9CA3AF", fontSize: 16, zIndex: 1 }} />
-                  
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, position: "relative", minWidth: { xs: 80, sm: 100, md: 100, lg: 120 } }}>
                   {/* Connecting Line */}
                   <Box 
                     sx={{ 
                       position: "absolute", 
-                      left: "21px", 
-                      right: "21px", 
-                      top: "53%", 
+                      left: 0, 
+                      right: 0, 
+                      top: "50%", 
                       height: "1px", 
                       bgcolor: "#E5E7EB", 
                       zIndex: 0 
                     }} 
                   />
 
-                  <Box sx={{ textAlign: "center", flex: 1, zIndex: 1 }}>
-                    <Typography variant="caption" sx={{ color: "#6B7280", px: 0.5, fontSize:"0.5rem" }}>
+                  <Box sx={{ textAlign: "center", flex: 1, zIndex: 1, position: "relative" }}>
+                    <Typography variant="caption" sx={{ 
+                      color: "#6B7280", 
+                      fontSize: "0.55rem", 
+                      bgcolor: "white", 
+                      px: 0.5,
+                      display: "inline-block",
+                      mb: 0.2
+                    }}>
                       {flight.duration}
                     </Typography>
-                    <Box
-                      sx={{
-                        width: 18,
-                        height: 18,
-                        bgcolor: "#0b66f9",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: "1px solid #1976d2",
-                        my: 0.25,
-                        mx: "auto"
-                      }}
-                    >
-                      <FlightIcon sx={{ fontSize: "0.8rem", color: "white", transform: "rotate(0deg)" }} />
+                    
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "white", width: "fit-content", mx: "auto", px: 0.5 }}>
+                      <Box
+                        sx={{
+                          width: 18,
+                          height: 18,
+                          bgcolor: "#0b66f9",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                      >
+                        <FlightIcon sx={{ 
+                          fontSize: "0.7rem", 
+                          color: "white", 
+                          display: "block", // Removes baseline spacing
+                          transform: "rotate(0deg)", // Makes it look like it's taking off
+                          margin: "auto" 
+                        }} />
+                      </Box>
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.25 }}>
-                      <AccessTimeIcon sx={{ fontSize: "0.5rem", color: "#EA580C" }} />
-                      <Typography variant="caption" sx={{ color: "#EA580C", fontSize: "0.5rem"}}>
-                        {flight.stops === 0 ? '1 Stop' : `${flight.stops} Stop${flight.stops > 1 ? 's' : ''}`}
+
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.25, bgcolor: "white", px: 0.5, width: "fit-content", mx: "auto", mt: 0.2 }}>
+                      <AccessTimeIcon sx={{ fontSize: "0.6rem", color: "#EA580C" }} />
+                      <Typography variant="caption" sx={{ color: "#EA580C", fontSize: "0.6rem", fontWeight: 500 }}>
+                        {flight.stops === 0 ? 'Non-stop' : `${flight.stops} Stop${flight.stops > 1 ? 's' : ''}`}
                       </Typography>
                     </Box>
                   </Box>
-                  <FlightLandIcon sx={{ color: "#9CA3AF", fontSize: 16, zIndex: 1 }} />
                 </Box>
 
                 {/* Arrival */}
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography sx={{fontSize: "0.7rem",color:"#1F2937" }}>
+                <Box sx={{ textAlign: "left", minWidth: 60 }}>
+                  <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: "#1F2937" }}>
                     {flight.arrivalTime}
                   </Typography>
-                  <Typography sx={{ color:"rgb(55 65 81 / var(--tw-text-opacity, 1))",fontWeight:"600", fontSize: "0.7rem"  }}>{flight.to}</Typography>
-                  <Typography variant="caption" sx={{ color: "#6B7280", fontSize: "0.6rem" }}>
-                    {flight.arrivalDate}
-                  </Typography>
+                  <Typography sx={{ color: "#4B5563", fontWeight: 600, fontSize: "0.7rem" }}>{flight.to}</Typography>
                 </Box>
               </Box>
 
               {/* Price & Book Button */}
               <Box sx={{ 
-                textAlign: { xs: "center", sm: "right", md: "right", lg: "right" }, 
-                minWidth: { xs: "100%", sm: 120, md: 120, lg: 120 },
+                textAlign: "right",
+                width: { xs: "100%", sm: 110, md: 110, lg: 120 },
+                flexShrink: 0,
                 display: "flex",
-                flexDirection: { xs: "column", sm: "column", md: "column", lg: "column" },
-                justifyContent: { xs: "center", sm: "flex-start", md: "flex-start", lg: "flex-start" },
-                alignItems: { xs: "center", sm: "flex-end", md: "flex-end", lg: "flex-end" },
-                gap: { xs: 1, sm: 0, md: 0, lg: 0 }
+                flexDirection: "column",
+                alignItems: { xs: "center", sm: "flex-end" }
               }}>
-                <Typography variant="caption" sx={{ color: "#6B7280", display: "block", fontSize: { xs: "0.65rem", sm: "0.7rem", md: "0.7rem", lg: "0.7rem" } }}>
-                  Total
-                </Typography>
-                <Typography sx={{ fontSize: { xs: "0.9rem", sm: "1rem", md: "1rem", lg: "1rem" }, fontWeight: 600, mb:1 }}>
+                {/* <Typography variant="caption" sx={{ color: "#6B7280", fontSize: "0.65rem", display: "block" }}>
+                  Starting from
+                </Typography> */}
+                <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "#111827", mb: 0.5 }}>
                   {flight.price}
                 </Typography>
                 <Button
                   variant="contained"
                   size="small"
-                  startIcon={<FlightTakeoffIcon sx={{ fontSize: 16 }} />}
-                  sx={{ borderRadius: 1.5,background:"#0b66f9", fontSize: "0.8rem", textTransform: "none", py: 0.5 }}
+                  onClick={() => handleBookNow(flight)}
+                  sx={{ 
+                    borderRadius: 1.5,
+                    bgcolor: "#0b66f9", 
+                    fontSize: "0.75rem", 
+                    textTransform: "none", 
+                    py: 0.5,
+                    px: 2,
+                    boxShadow: "none",
+                    "&:hover": { bgcolor: "#0052cc", boxShadow: "none" }
+                  }}
                 >
                   Book Now
                 </Button>
               </Box>
             </Box>
+
 
             {/* Bottom Tags Row */}
             <Divider sx={{ my: { xs: 1, sm: 1.5, md: 1.5, lg: 1.5 }, borderColor: "#9CA3AF", opacity: 0.2 }} />
@@ -605,16 +660,63 @@ export default function Flightlisting({ slug = [] }) {
               </Button>
             </Box>
             <Collapse in={expandedCardId === flight.id} timeout="auto" unmountOnExit>
-              <FlightDetails 
-                onClose={() => setExpandedCardId(null)} 
-                selectedFlightData={selectedFlightData}
-              />
+              {showBaggageSelection === flight.id ? (
+                <BaggageSelection 
+                  flight={selectedFlightData}
+                  onSelect={handleBaggageSelect}
+                  onClose={() => {
+                    setShowBaggageSelection(null);
+                    setExpandedCardId(null);
+                  }}
+                />
+              ) : (
+                <FlightDetails 
+                  onClose={() => setExpandedCardId(null)} 
+                  selectedFlightData={selectedFlightData}
+                />
+              )}
             </Collapse>
           </Paper>
         ))}
+
+        {/* ✅ See More Button */}
+        {visibleFlights < filteredFlights.length && (
+          <Box sx={{ 
+            display: "flex", 
+            justifyContent: "center", 
+            mt: 2,
+            mb: 4,
+            maxWidth: { xs: "92%", sm: "500px", md: "580px", lg: "630px" },
+            width: "92%",
+            mx: { xs: "auto", sm: 0 },
+            ml: { xs: "auto", sm: "auto", md: "auto", lg: "auto" },
+          }}>
+            <Button
+              variant="outlined"
+              onClick={() => setVisibleFlights(prev => prev + 8)}
+              sx={{
+                borderRadius: 1.5,
+                textTransform: "none",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "#0b66f9",
+                borderColor: "#0b66f9",
+                px: 4,
+                // py: 1,
+                "&:hover": {
+                  bgcolor: "#f0f7ff",
+                  borderColor: "#0052cc",
+                }
+              }}
+            >
+              See More
+            </Button>
+          </Box>
+        )}
           </Box>
         </Box>
       </Box>
+      )}
     </Box>
   );
 }

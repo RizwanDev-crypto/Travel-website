@@ -20,6 +20,27 @@ import {
 
 import { People, Add, Remove, ExpandMore, Close } from "@mui/icons-material";
 
+// Global cache for countries to prevent re-fetching on every mount
+let cachedCountries = null;
+
+const COMMON_COUNTRIES = [
+  { name: "Pakistan", flag: "https://flagcdn.com/pk.svg", code: "PK" },
+  { name: "United Arab Emirates", flag: "https://flagcdn.com/ae.svg", code: "AE" },
+  { name: "Saudi Arabia", flag: "https://flagcdn.com/sa.svg", code: "SA" },
+  { name: "United Kingdom", flag: "https://flagcdn.com/gb.svg", code: "GB" },
+  { name: "United States", flag: "https://flagcdn.com/us.svg", code: "US" },
+  { name: "Qatar", flag: "https://flagcdn.com/qa.svg", code: "QA" },
+  { name: "Oman", flag: "https://flagcdn.com/om.svg", code: "OM" },
+  { name: "Kuwait", flag: "https://flagcdn.com/kw.svg", code: "KW" },
+  { name: "Bahrain", flag: "https://flagcdn.com/bh.svg", code: "BH" },
+  { name: "India", flag: "https://flagcdn.com/in.svg", code: "IN" },
+  { name: "Canada", flag: "https://flagcdn.com/ca.svg", code: "CA" },
+  { name: "Australia", flag: "https://flagcdn.com/au.svg", code: "AU" },
+  { name: "Germany", flag: "https://flagcdn.com/de.svg", code: "DE" },
+  { name: "France", flag: "https://flagcdn.com/fr.svg", code: "FR" },
+  { name: "Turkey", flag: "https://flagcdn.com/tr.svg", code: "TR" },
+];
+
 export default function TravellersDropdown({
   travellers,
   onTravellersChange,
@@ -30,19 +51,30 @@ export default function TravellersDropdown({
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [childAges, setChildAges] = useState([0]);
-  const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [countries, setCountries] = useState(cachedCountries || COMMON_COUNTRIES);
+  const [loading, setLoading] = useState(!cachedCountries);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   /* ===== Fetch Countries with Flags ===== */
   useEffect(() => {
+    // If already cached, don't fetch again
+    if (cachedCountries) {
+      setLoading(false);
+      return;
+    }
+
     const fetchCountries = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
       try {
         const response = await fetch(
-          "https://restcountries.com/v3.1/all?fields=name,flags,cca2"
+          "https://restcountries.com/v3.1/all?fields=name,flags,cca2",
+          { signal: controller.signal }
         );
+        clearTimeout(timeoutId);
         const data = await response.json();
         
         // Format countries data
@@ -54,25 +86,11 @@ export default function TravellersDropdown({
           }))
           .sort((a, b) => a.name.localeCompare(b.name));
         
+        cachedCountries = formattedCountries;
         setCountries(formattedCountries);
       } catch (error) {
         console.error("Error fetching countries:", error);
-        // Fallback to static list without flags
-        setCountries([
-          { name: "Pakistan", flag: "https://flagcdn.com/pk.svg", code: "PK" },
-          { name: "India", flag: "https://flagcdn.com/in.svg", code: "IN" },
-          { name: "Afghanistan", flag: "https://flagcdn.com/af.svg", code: "AF" },
-          { name: "Bangladesh", flag: "https://flagcdn.com/bd.svg", code: "BD" },
-          { name: "China", flag: "https://flagcdn.com/cn.svg", code: "CN" },
-          { name: "Japan", flag: "https://flagcdn.com/jp.svg", code: "JP" },
-          { name: "United Arab Emirates", flag: "https://flagcdn.com/ae.svg", code: "AE" },
-          { name: "Saudi Arabia", flag: "https://flagcdn.com/sa.svg", code: "SA" },
-          { name: "United States", flag: "https://flagcdn.com/us.svg", code: "US" },
-          { name: "United Kingdom", flag: "https://flagcdn.com/gb.svg", code: "GB" },
-          { name: "Germany", flag: "https://flagcdn.com/de.svg", code: "DE" },
-          { name: "France", flag: "https://flagcdn.com/fr.svg", code: "FR" },
-          { name: "Australia", flag: "https://flagcdn.com/au.svg", code: "AU" },
-        ]);
+        // Fallback is already set in the state initializer
       } finally {
         setLoading(false);
       }
@@ -404,7 +422,14 @@ const handleTravellerChange = (type, operation) => {
         
           {/* Nationality with Flags */}
           <Box mt={2}>
-            <Typography fontSize={10} fontWeight={600} mb={0.5}>
+            <Typography 
+              component="label" 
+              htmlFor="nationality-select"
+              fontSize={10} 
+              fontWeight={600} 
+              mb={0.5} 
+              sx={{ cursor: "pointer", display: "block" }}
+            >
               Nationality
             </Typography>
 
@@ -418,6 +443,7 @@ const handleTravellerChange = (type, operation) => {
                 </Box>
               ) : (
                 <Select
+                  id="nationality-select"
                   value={nationalityCode} // 👈 NOW USING COUNTRY CODE
                   onChange={(e) => {
                     // Find selected country
@@ -426,6 +452,7 @@ const handleTravellerChange = (type, operation) => {
                       onNationalityChange(e.target.value); //  PASS COUNTRY CODE TO PARENT
                     }
                   }}
+                  IconComponent={ExpandMore}
                   sx={{ 
                     fontSize: 10, 
                     height: 32,
@@ -439,6 +466,10 @@ const handleTravellerChange = (type, operation) => {
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       gap:1,
+                    },
+                    '& .MuiSelect-icon': {
+                      fontSize: 16,
+                      color: "#000000"
                     }
                   }}
                   MenuProps={{
@@ -461,9 +492,9 @@ const handleTravellerChange = (type, operation) => {
                         }
                       }
                     },
-                    disablePortal: false, // ✅ Keep menu inside the parent container
-                    disableScrollLock: false,
-                    sx: { zIndex: 900 } // Higher than the main panel
+                    disablePortal: false, // ✅ Let it portal but with high zIndex
+                    disableScrollLock: true,
+                    sx: { zIndex: 9999 } // Much higher than the main panel (999)
                   }}
                 >
                   {countries.map((country) => (

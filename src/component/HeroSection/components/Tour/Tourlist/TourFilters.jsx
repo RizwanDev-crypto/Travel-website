@@ -4,15 +4,14 @@ import {
   Box,
   Typography,
   Paper,
-  IconButton,
-  Chip,
   Button,
   TextField,
   FormControlLabel,
   Checkbox,
   Slider,
   Divider,
-  Collapse
+  Collapse,
+  Chip
 } from "@mui/material";
 import {
   Tune as TuneIcon,
@@ -20,8 +19,10 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
   Search as SearchIcon,
   Star as StarIcon,
-  Hotel as HotelIcon,
-  PaymentsOutlined as PaymentsOutlinedIcon
+  Tour as TourIcon,
+  PaymentsOutlined as PaymentsOutlinedIcon,
+  AccessTime as DurationIcon,
+  Group as GroupIcon
 } from "@mui/icons-material";
 import { useState } from "react";
 
@@ -56,17 +57,19 @@ const FilterSection = ({ title, icon, defaultOpen = true, children, hasDivider =
   );
 };
 
-export default function HotelFilters({ 
-  hotelCount = 1,
+export default function TourFilters({ 
+  tourCount = 1,
   searchName = "",
   onSearchNameChange = () => {},
-  priceRange = [0, 10000],
+  priceRange = [0, 5000],
   onPriceChange = () => {},
   selectedTypes = [],
   onTypesChange = () => {},
-  selectedStars = [],
-  onStarsChange = () => {},
-  hotelTypes = []
+  selectedDurations = [],
+  onDurationsChange = () => {},
+  minRating = 0,
+  onRatingChange = () => {},
+  tourTypes = []
 }) {
 
   const handlePriceChange = (event, newValue) => {
@@ -80,18 +83,23 @@ export default function HotelFilters({
     onTypesChange(newTypes);
   };
 
-  const handleStarChange = (star) => {
-    const newStars = selectedStars.includes(star)
-      ? selectedStars.filter(s => s !== star)
-      : [...selectedStars, star];
-    onStarsChange(newStars);
+  const handleDurationChange = (duration) => {
+    const newDurations = selectedDurations.includes(duration)
+      ? selectedDurations.filter(d => d !== duration)
+      : [...selectedDurations, duration];
+    onDurationsChange(newDurations);
+  };
+
+  const handleRatingChange = (rating) => {
+    onRatingChange(rating === minRating ? 0 : rating);
   };
 
   const handleClear = () => {
     onSearchNameChange("");
-    onPriceChange([0, 10000]);
+    onPriceChange([0, 5000]);
     onTypesChange([]);
-    onStarsChange([]);
+    onDurationsChange([]);
+    onRatingChange(0);
   };
 
   return (
@@ -118,7 +126,7 @@ export default function HotelFilters({
             Filters
           </Typography>
           <Chip
-            label={hotelCount}
+            label={tourCount}
             size="small"
             sx={{
               color: "#1E40AF",
@@ -158,7 +166,7 @@ export default function HotelFilters({
         <TextField
           fullWidth
           size="small"
-          placeholder="Type Hotel Name..."
+          placeholder="Type Tour Name..."
           value={searchName}
           onChange={(e) => onSearchNameChange(e.target.value)}
           sx={{
@@ -195,7 +203,7 @@ export default function HotelFilters({
             value={priceRange}
             onChange={handlePriceChange}
             min={0}
-            max={10000}
+            max={5000}
             valueLabelDisplay="auto"
             sx={{
               height: 6,
@@ -234,17 +242,14 @@ export default function HotelFilters({
             }}>
               ${priceRange[0]} - ${priceRange[1]}
             </Typography>
-            <Typography variant="caption" sx={{ color: "#6B7280", textAlign: "center", display: "block", mt: 1 }}>
-              {hotelCount} hotel{hotelCount !== 1 ? 's' : ''} in range
-            </Typography>
           </Box>
         </Box>
       </FilterSection>
 
-      {/* Accommodation Type */}
-      <FilterSection title="Accommodation Type" icon={<HotelIcon sx={{ fontSize: 18 }} />}>
+      {/* Tour Type */}
+      <FilterSection title="Tour Type" icon={<TourIcon sx={{ fontSize: 18 }} />}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-          {hotelTypes.map((type) => (
+          {tourTypes.map((type) => (
             <Box key={type} sx={{ 
               display: "flex", 
               alignItems: "center", 
@@ -289,14 +294,14 @@ export default function HotelFilters({
         </Box>
       </FilterSection>
 
-      {/* Star Rating */}
-      <FilterSection title="Star Rating" icon={<StarIcon sx={{ fontSize: 18 }} />} hasDivider={false}>
+      {/* Duration */}
+      <FilterSection title="Duration" icon={<DurationIcon sx={{ fontSize: 18 }} />}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-          {[5, 4, 3, 2, 1].map((star) => (
-            <Box key={star} sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between',
+          {["0-3 Hours", "3-5 Hours", "5-7 Hours", "Full Day", "Multi-Day"].map((duration) => (
+            <Box key={duration} sx={{ 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "space-between",
               cursor: "pointer",
               "&:hover": {
                 "& .MuiCheckbox-root": {
@@ -304,13 +309,13 @@ export default function HotelFilters({
                 }
               }
             }}>
-              <FormControlLabel
+               <FormControlLabel
                 control={
                   <Checkbox
                     size="small"
                     disableRipple
-                    checked={selectedStars.includes(star)}
-                    onChange={() => handleStarChange(star)}
+                    checked={selectedDurations.includes(duration)}
+                    onChange={() => handleDurationChange(duration)}
                     sx={{
                       color: "#D1D5DB",
                       outline: "none",
@@ -329,7 +334,55 @@ export default function HotelFilters({
                     }}
                   />
                 }
-                label={<Typography component="span" sx={{ fontSize: "0.85rem", color: "#4B5563" }}>{star} Star</Typography>}
+                label={<Typography component="span" sx={{ fontSize: "0.85rem", color: "#4B5563" }}>{duration}</Typography>}
+                sx={{ margin: 0 }}
+              />
+            </Box>
+          ))}
+        </Box>
+      </FilterSection>
+
+      {/* Rating */}
+      <FilterSection title="Rating" icon={<StarIcon sx={{ fontSize: 18 }} />} hasDivider={false}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+          {[5, 4, 3, 2, 1].map((star) => (
+            <Box key={star} sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              cursor: "pointer",
+              "&:hover": {
+                "& .MuiCheckbox-root": {
+                  color: "#3B82F6",
+                }
+              }
+            }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    disableRipple
+                    checked={minRating === star}
+                    onChange={() => handleRatingChange(star)}
+                    sx={{
+                      color: "#D1D5DB",
+                      outline: "none",
+                      boxShadow: "none",
+                      "&:hover": {
+                        backgroundColor: "transparent", 
+                      },
+                      "&.Mui-checked": { 
+                        color: "#3B82F6",
+                        "&:hover": {
+                          backgroundColor: "transparent", 
+                        }
+                      },
+                      padding: "4px",
+                      "& .MuiSvgIcon-root": { fontSize: 18 }
+                    }}
+                  />
+                }
+                label={<Typography component="span" sx={{ fontSize: "0.85rem", color: "#4B5563" }}>{star} Star & Up</Typography>}
                 sx={{ margin: 0 }}
               />
             </Box>

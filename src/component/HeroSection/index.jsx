@@ -96,7 +96,7 @@ const HeroSection = () => {
             mt:3,
             borderRadius: 3,
             backdropFilter: "blur(10px)",
-            maxWidth: {xs: "100%", sm: "100%", md: 896,lg: 896},
+            maxWidth: {xs: "100%", sm: "100%", md: 826,lg: 896},
             backgroundColor: isMobile ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.95)",
           }}
         >

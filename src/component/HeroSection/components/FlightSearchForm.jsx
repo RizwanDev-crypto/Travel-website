@@ -418,7 +418,7 @@ const AirportDropdown = ({ label, value, onChange, displayValue, onDisplayChange
   );
 };
 
-export default function FlightSearchForm() {
+export default function FlightSearchForm({ calendarWidth }) {
   const { setFlightSearchData } = useGlobalContext();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -548,7 +548,7 @@ export default function FlightSearchForm() {
 
   // ----------------- JSX -----------------
   return (
-    <Box sx={{ p: 2, maxWidth: 900, mx: "auto" }}>
+    <Box sx={{ p: 2, maxWidth: { xs: "100%", md: "800px", lg: "900px" }, mx: "auto" }}>
       {/* Trip type + cabin */}
       <Grid
         container
@@ -704,7 +704,7 @@ export default function FlightSearchForm() {
           sx={{
             display: "flex",
             gap: 1,
-            width: { xs: "100%", md: 175, lg: 230 },
+            width: calendarWidth || { xs: "100%", md: 180, lg: 230 },
             flexDirection: { xs: "column", md: "row" },
             mt: { xs: "5px", md: "0.4px", lg: "0.4px" },
           }}

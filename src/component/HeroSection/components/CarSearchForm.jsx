@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useGlobalContext } from "@/app/context/GlobalContext";
 import { MapPin, ChevronDown } from "lucide-react";
 import {
   Grid,
@@ -25,20 +27,18 @@ import {
 } from "@mui/material";
 import { LocationOn, Search, AccessTime } from "@mui/icons-material";
 import TravellersDropdown from "./TravellersDropDown";
+import { countriesAirports as countriesAirportsData } from "../../data/countriesAirports";
 
-// Same flat array structure as other forms
-const countriesAirports = [
-  { city: "Dubai", airport: "Dubai International Airport", code: "DXB" },
-  { city: "Abu Dhabi", airport: "Abu Dhabi Intl Airport", code: "AUH" },
-  { city: "Karachi", airport: "Jinnah International Airport", code: "KHI" },
-  { city: "Lahore", airport: "Allama Iqbal Airport", code: "LHE" },
-  { city: "Delhi", airport: "Indira Gandhi International Airport", code: "DEL" },
-  { city: "Mumbai", airport: "Chhatrapati Shivaji Maharaj Airport", code: "BOM" },
-  { city: "Riyadh", airport: "King Khalid Intl Airport", code: "RUH" },
-  { city: "Jeddah", airport: "King Abdulaziz Intl Airport", code: "JED" },
-  { city: "Berlin", airport: "Berlin Brandenburg Airport", code: "BER" },
-  { city: "Frankfurt", airport: "Frankfurt Airport", code: "FRA" },
-];
+
+// Flatten the countries data to get all cities
+const countriesAirports = countriesAirportsData.flatMap(country => 
+  country.cities.map(city => ({
+    city: city.city,
+    airport: city.airport,
+    code: city.code,
+    country: country.country
+  }))
+);
 
 const timeSlots = [
   "12:00 AM", "12:30 AM", "01:00 AM", "01:30 AM", "02:00 AM", "02:30 AM",
@@ -397,6 +397,8 @@ const AirportDropdown = ({
 export default function CarSearchForm() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const router = useRouter();
+  const { setCarSearchData } = useGlobalContext();
 
   const [flyingFrom, setFlyingFrom] = useState("");
   const [destinationTo, setDestinationTo] = useState("");
@@ -405,10 +407,11 @@ export default function CarSearchForm() {
   const [dropOffDate, setDropOffDate] = useState("");
   const [dropOffTime, setDropOffTime] = useState("");
   const [travellers, setTravellers] = useState({
-    adults: 0,
+    adults: 1,
     children: 0,
     infants: 0,
   });
+  const [nationalityCode, setNationalityCode] = useState("PK");
 
   // Refs for date inputs
   const pickUpDateRef = useRef(null);
@@ -426,6 +429,26 @@ export default function CarSearchForm() {
     setDropOffTime("00:00"); // Default time
   }, []);
 
+  // ✅ Load from localStorage on Car Listing page
+  useEffect(() => {
+    const saved = localStorage.getItem("carSearchData");
+    if (saved) {
+      const data = JSON.parse(saved);
+      setFlyingFrom(data.from || "");
+      setDestinationTo(data.to || "");
+      setPickUpDate(data.pickUpDate || "");
+      setPickUpTime(data.pickUpTime || "00:00");
+      setDropOffDate(data.dropOffDate || "");
+      setDropOffTime(data.dropOffTime || "00:00");
+      setNationalityCode(data.nationalityCode || "PK");
+      
+      if (data.travellers) {
+        setTravellers(data.travellers);
+      }
+    }
+  }, []);
+
+
   // Drop-off date ko automatically update karein jab pick-up date change ho
   // SAME LOGIC AS FLIGHTSEARCHFORM AND HOTELSEARCHFORM
   useEffect(() => {
@@ -442,6 +465,31 @@ export default function CarSearchForm() {
     if (ref.current) {
       ref.current.showPicker();
     }
+  };
+
+  // Handle search and navigation
+  const handleSearch = () => {
+    if (!flyingFrom || !destinationTo) {
+      alert("Please select both pick-up and drop-off locations.");
+      return;
+    }
+
+    const searchData = {
+      from: flyingFrom,
+      to: destinationTo,
+      pickUpDate,
+      pickUpTime,
+      dropOffDate,
+      dropOffTime,
+      travellers,
+      nationalityCode,
+    };
+
+    setCarSearchData(searchData);
+    localStorage.setItem("carSearchData", JSON.stringify(searchData));
+
+    // Navigate to car listing route
+    router.push(`/cars/${flyingFrom}/${destinationTo}/${pickUpDate}/${dropOffDate}/${nationalityCode}`);
   };
 
   return (
@@ -470,7 +518,7 @@ export default function CarSearchForm() {
       ) : (
         // Desktop Layout - Grid
         <Grid container spacing={2} sx={{ p: 2 }}>
-          <Grid item xs={12} sm={6} sx={{ width: {xs: "422px", sm: "320px", md:"422px", lg:"422px"} }}>
+          <Grid item xs={12} sm={6} sx={{ width: {xs: "422px", sm: "350px", md:"385px", lg:"422px"} }}>
             <AirportDropdown
               placeholder="Select City"
               value={flyingFrom}
@@ -478,7 +526,7 @@ export default function CarSearchForm() {
               label="From Airport"
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ width: {xs: "422px", sm: "320px", md:"422px", lg:"422px"} }}>
+          <Grid item xs={12} sm={6} sx={{ width: {xs: "422px", sm: "320px", md:"385px", lg:"422px"} }}>
             <AirportDropdown
               placeholder="Select"
               value={destinationTo}
@@ -509,7 +557,15 @@ export default function CarSearchForm() {
             <OutlinedInput
               type="date"
               value={pickUpDate}
-              onChange={(e) => setPickUpDate(e.target.value)}
+              onChange={(e) => {
+                setPickUpDate(e.target.value);
+                // Auto-open drop-off date picker
+                setTimeout(() => {
+                  if (dropOffDateRef.current) {
+                    dropOffDateRef.current.showPicker();
+                  }
+                }, 500); // Small delay for smooth transition
+              }}
               inputRef={pickUpDateRef}
               onClick={() => handleDateInputClick(pickUpDateRef)}
               inputProps={{
@@ -655,6 +711,7 @@ export default function CarSearchForm() {
             color="primary"
             startIcon={<Search sx={{ fontSize: 20 }} />}
             fullWidth
+            onClick={handleSearch}
             sx={{
               height: 44,
               fontSize: "14px",
@@ -678,7 +735,7 @@ export default function CarSearchForm() {
           {/* Container for all 4 date/time fields */}
           <Grid item xs={12} sm={8} md={6} lg={5} sx={{ width: "408px", display: "flex" }}>
             {/* Pick-Up Date */}
-            <Box sx={{ width: "102px", flexShrink: 0 }}>
+            <Box sx={{ width: { xs: "102px", sm: "102px", md: "90px", lg: "102px" }, flexShrink: 0 }}>
               <FormControl fullWidth variant="outlined" size="small">
                 <InputLabel shrink sx={{ fontSize: "12px", color: "#A0A0A0", top: "13px", fontFamily: "'Inter', sans-serif" }}>
                   Pick-Up Date
@@ -686,7 +743,15 @@ export default function CarSearchForm() {
                 <OutlinedInput
                   type="date"
                   value={pickUpDate}
-                  onChange={(e) => setPickUpDate(e.target.value)}
+                  onChange={(e) => {
+                    setPickUpDate(e.target.value);
+                    // Auto-open drop-off date picker
+                    setTimeout(() => {
+                      if (dropOffDateRef.current) {
+                        dropOffDateRef.current.showPicker();
+                      }
+                    }, 100); // Small delay for smooth transition
+                  }}
                   inputRef={pickUpDateRef}
                   onClick={() => handleDateInputClick(pickUpDateRef)}
                   inputProps={{
@@ -732,7 +797,7 @@ export default function CarSearchForm() {
             </Box>
 
             {/* Pick-Up Time */}
-            <Box sx={{ width: "102px", flexShrink: 0 }}>
+            <Box sx={{ width: { xs: "102px", sm: "102px", md: "95px", lg: "100px" }, flexShrink: 0 }}>
               <TimeDropdown
                 label="Pick-Up Time"
                 value={pickUpTime}
@@ -744,7 +809,7 @@ export default function CarSearchForm() {
             <Box sx={{ width: "15px", flexShrink: 0 }} />
 
             {/* Drop-Off Date */}
-            <Box sx={{ width: "102px", flexShrink: 0 }}>
+            <Box sx={{ width: { xs: "102px", sm: "102px", md: "90px", lg: "102px" }, flexShrink: 0 }}>
               <FormControl fullWidth variant="outlined" size="small">
                 <InputLabel shrink sx={{ fontSize: "12px", color: "#A0A0A0", top: "13px", fontFamily: "'Inter', sans-serif" }}>
                   Drop-Off Date
@@ -799,7 +864,7 @@ export default function CarSearchForm() {
             </Box>
 
             {/* Drop-Off Time */}
-            <Box sx={{ width: "102px", flexShrink: 0 }}>
+            <Box sx={{ width: { xs: "102px", sm: "102px", md: "95px", lg: "102px" }, flexShrink: 0 }}>
               <TimeDropdown
                 label="Drop-Off Time"
                 value={dropOffTime}
@@ -809,13 +874,15 @@ export default function CarSearchForm() {
           </Grid>
 
           {/* Travellers */}
-          <Grid item xs={12} sm={2} md={3} lg={3} sx={{ ml: 4 }}>
+          <Grid item xs={12} sm={2} md={3} lg={3} sx={{ml: {xs: 0, sm: 4, md: -0.9, lg: 3.7} }}>
             <TravellersDropdown
               travellers={travellers}
               onTravellersChange={setTravellers}
+              nationalityCode={nationalityCode}
+              onNationalityChange={setNationalityCode}
               sx={{
                 width: "100%",
-                minWidth: {xs: 351, sm: 210, md: 351, lg: 351},
+                minWidth: {xs: 351, sm: 247, md: 315, lg: 352},
               }}
             />
           </Grid>
@@ -825,10 +892,11 @@ export default function CarSearchForm() {
             <IconButton
               color="primary"
               size="small"
+              onClick={handleSearch}
               sx={{
                 backgroundColor: "#0b66f9",
                 "&:hover": { backgroundColor: "#000" },
-                width: { xs: 235, sm: 650, md: 60, lg: 60 },
+                width: { xs: 235, sm: 688, md: 60, lg: 60 },
                 height: 40,
                 px: 1.5,
                 borderRadius: 1,

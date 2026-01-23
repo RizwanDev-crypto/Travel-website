@@ -62,11 +62,52 @@ const FilterSection = ({ title, icon, defaultOpen = true, children, hasDivider =
   );
 };
 
-export default function FlightFilters({ flightCount = 3 }) {
-  const [priceRange, setPriceRange] = useState([425, 10000]);
+export default function FlightFilters({ 
+  flightCount = 3, 
+  flightNumberFilter = "", 
+  onFlightNumberChange = () => {},
+  priceRange = [425, 10000],
+  onPriceChange = () => {},
+  selectedStops = [],
+  onStopsChange = () => {},
+  selectedAirlines = [],
+  onAirlinesChange = () => {},
+  airlinesList = [],
+  selectedTimeSlots = [],
+  onTimeSlotChange = () => {}
+}) {
 
   const handlePriceChange = (event, newValue) => {
-    setPriceRange(newValue);
+    onPriceChange(newValue);
+  };
+
+  const handleStopChange = (label) => {
+    const newStops = selectedStops.includes(label)
+      ? selectedStops.filter(s => s !== label)
+      : [...selectedStops, label];
+    onStopsChange(newStops);
+  };
+
+  const handleAirlineChange = (airline) => {
+    const newAirlines = selectedAirlines.includes(airline)
+      ? selectedAirlines.filter(a => a !== airline)
+      : [...selectedAirlines, airline];
+    onAirlinesChange(newAirlines);
+  };
+
+  const handleTimeSlotChange = (slot) => {
+    const newSlots = selectedTimeSlots.includes(slot)
+      ? selectedTimeSlots.filter(s => s !== slot)
+      : [...selectedTimeSlots, slot];
+    onTimeSlotChange(newSlots);
+  };
+
+  const handleClear = () => {
+    onPriceChange([425, 10000]);
+    onFlightNumberChange("");
+    onStopsChange([]);
+    onAirlinesChange([]);
+    onTimeSlotChange([]);
   };
 
   return (
@@ -99,9 +140,8 @@ export default function FlightFilters({ flightCount = 3 }) {
               color: "#1E40AF",
               fontWeight: 700,
               background: "#DBEAFE",
-
               height: 20,
-              width: 20,
+              width: 24,
               minWidth: 20,
               p: 0,
               fontSize: "0.7rem",
@@ -114,6 +154,7 @@ export default function FlightFilters({ flightCount = 3 }) {
         </Box>
         <Button
           size="small"
+          onClick={handleClear}
           sx={{
             color: "#2563EB",
             textTransform: "none",
@@ -135,6 +176,8 @@ export default function FlightFilters({ flightCount = 3 }) {
         <TextField
           fullWidth
           size="small"
+          value={flightNumberFilter}
+          onChange={(e) => onFlightNumberChange(e.target.value)}
           placeholder="Enter flight number"
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -162,9 +205,9 @@ export default function FlightFilters({ flightCount = 3 }) {
 >
      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
   {[
-    { label: "Direct", count: 2 },
-    { label: "1 Stop", count: 30 },
-    { label: "2+ Stops", count: 0 }
+    { label: "Direct" },
+    { label: "1 Stop" },
+    { label: "2+ Stops" }
   ].map((item) => (
     <Box key={item.label} sx={{ 
       display: "flex", 
@@ -182,25 +225,14 @@ export default function FlightFilters({ flightCount = 3 }) {
           <Checkbox
             size="small"
             disableRipple
+            checked={selectedStops.includes(item.label)}
+            onChange={() => handleStopChange(item.label)}
             sx={{
               color: "#D1D5DB",
-              outline: "none",
-              boxShadow: "none",
-              "&:hover": {
-                backgroundColor: "transparent", 
-              },
-              "&.Mui-checked": { 
-                color: "#3B82F6",
-                "&:hover": {
-                  backgroundColor: "transparent", 
-                }
-              },
-              "&.Mui-focusVisible": {
-                outline: "none",
-                boxShadow: "none",
-              },
+              "&.Mui-checked": { color: "#3B82F6" },
               padding: "4px",
-              "& .MuiSvgIcon-root": { fontSize: 18 }
+              "& .MuiSvgIcon-root": { fontSize: 18 },
+              "&:hover": { bgcolor: "transparent" }
             }}
           />
         }
@@ -209,23 +241,15 @@ export default function FlightFilters({ flightCount = 3 }) {
             {item.label}
           </Typography>
         }
-        sx={{ 
-          margin: 0,
-          "&:hover": {
-            backgroundColor: "transparent", 
-          }
-        }}
+        sx={{ margin: 0 }}
       />
-      <Typography sx={{ fontSize: "0.8rem", color: "#6B7280" }}>
-        {item.count}
-      </Typography>
     </Box>
   ))}
 </Box>
       </FilterSection>
 
       {/* Price Range */}
-   <FilterSection  
+      <FilterSection  
   title={
     <>
       Price
@@ -239,7 +263,7 @@ export default function FlightFilters({ flightCount = 3 }) {
         color: "#4B5563",
         fontWeight: 500
       }}>
-        ${priceRange[0]} - ${priceRange[1]}
+        USD {priceRange[0]} - USD {priceRange[1]}
       </Box>
     </>
   } 
@@ -247,8 +271,8 @@ export default function FlightFilters({ flightCount = 3 }) {
 >
   <Box sx={{ px: 1, mt: 2 }}>
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-      <Typography variant="caption" sx={{ color: "#9CA3AF", }}>$425</Typography>
-      <Typography variant="caption" sx={{ color: "#9CA3AF" }}>$10000</Typography>
+      <Typography variant="caption" sx={{ color: "#9CA3AF", }}>USD 425</Typography>
+      <Typography variant="caption" sx={{ color: "#9CA3AF" }}>USD 10000</Typography>
     </Box>
     <Slider
       value={priceRange}
@@ -267,42 +291,10 @@ export default function FlightFilters({ flightCount = 3 }) {
           height: 18,
           backgroundColor: "#fff",
           border: "2px solid #3b82f6",
-          "&:hover": { boxShadow: "0 0 0 8px rgba(59, 130, 246, 0.16)" },
         },
         "& .MuiSlider-rail": { opacity: 0.3, backgroundColor: "#D1D5DB" },
       }}
     />
-    <Box
-      sx={{
-        borderRadius: 1.5,
-        py: 1,
-        textAlign: "center"
-      }}
-    >
-      <Typography sx={{ 
-        fontWeight: 700, 
-        fontSize: "0.85rem",  
-        bgcolor: "#EFF6FF",   
-        borderRadius: 2,
-        py: 1,
-        width: "100%",
-        display: "block",
-        color: "#1D4ED8",
-        border: "1px solid #BFDBFE",
-        textAlign: "center"
-      }}>
-        ${priceRange[0]} - ${priceRange[1]}
-      </Typography>
-      <Typography variant="caption" sx={{ 
-        opacity: 0.8, 
-        display: "block", 
-        fontSize: "0.65rem",
-        mt: 1,
-        color: "#6B7280"
-      }}>
-        32 flights in range
-      </Typography>
-    </Box>
   </Box>
 </FilterSection>
 
@@ -313,7 +305,7 @@ export default function FlightFilters({ flightCount = 3 }) {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5}}>
           {[
             { label: "Early Morning", time: "00:00 - 00:06", icon: <Brightness2OutlinedIcon sx={{ fontSize: 16 ,color:"#F97316"}} /> },
-            { label: "Morning", time: "00:00 - 12:00", icon: <MorningIcon sx={{ fontSize: 16, color:"rgb(234 179 8 / var(--tw-text-opacity, 1))"}} /> },
+            { label: "Morning", time: "06:00 - 12:00", icon: <MorningIcon sx={{ fontSize: 16, color: "#EAB308" }} /> },
             { label: "Afternoon", time: "12:00 - 18:00", icon: <WbTwilightIcon sx={{ fontSize: 16 , color:"#3B82F6"}} /> },
             { label: "Evening", time: "18:00 - 24:00", icon: <EveningIcon sx={{ fontSize: 16 , color:"#A855F7"}} /> }
           ].map((slot) => (
@@ -325,8 +317,8 @@ export default function FlightFilters({ flightCount = 3 }) {
               borderRadius: 1.5,
               p: 0.5,
               width: "92%",
-              transition: "all 0.2s ease",
               cursor: "pointer",
+              transition: "all 0.2s ease",
               "&:hover": {
                 borderColor: "#3B82F6",
                 bgcolor: "#F0F7FF",
@@ -340,54 +332,27 @@ export default function FlightFilters({ flightCount = 3 }) {
                   <Checkbox
                     size="small"
                     disableRipple
+                    checked={selectedTimeSlots.includes(slot.label)}
+                    onChange={() => handleTimeSlotChange(slot.label)}
                     sx={{
                       color: "#D1D5DB",
-                      outline: "none",
-                      boxShadow: "none",
-                      "&:hover": {
-                        backgroundColor: "transparent", 
-                      },
-                      "&.Mui-checked": { 
-                        color: "#3B82F6",
-                        "&:hover": {
-                          backgroundColor: "transparent", 
-                        }
-                      },
-                      "&.Mui-focusVisible": {
-                        outline: "none",
-                        boxShadow: "none",
-                      },
+                      "&.Mui-checked": { color: "#3B82F6" },
                       padding: "4px",
-                      "& .MuiSvgIcon-root": { fontSize: 18 }
+                      "& .MuiSvgIcon-root": { fontSize: 18 },
+                      "&:hover": { bgcolor: "transparent" }
                     }}
                   />
                 }
                 label={
                   <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1, ml: 0.2 }}>
-                    <Box component="span" sx={{ 
-                      width: 24, 
-                      height: 24, 
-                      borderRadius: 1, 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center",
-                      color: "#9CA3AF"
-                    }}>
-                      {slot.icon}
-                    </Box>
+                    {slot.icon}
                     <Box component="span" sx={{ display: "flex", flexDirection: "column" }}>
-                      <Typography component="span" sx={{ fontSize: "0.7rem", color: "#1F2937", fontWeight: 600, lineHeight: 1.5, display: "block" }}>{slot.label}</Typography>
-                      <Typography component="span" sx={{ color: "#6B7280", fontSize: "0.6rem", lineHeight: 1.3, display: "block" }}>{slot.time}</Typography>
+                      <Typography component="span" sx={{ fontSize: "0.7rem", color: "#1F2937", fontWeight: 600 }}>{slot.label}</Typography>
+                      <Typography component="span" sx={{ color: "#6B7280", fontSize: "0.6rem" }}>{slot.time}</Typography>
                     </Box>
                   </Box>
                 }
-                sx={{ 
-                  margin: 0,
-                  width: "100%",
-                  "&:hover": {
-                    backgroundColor: "transparent", 
-                  }
-                }}
+                sx={{ margin: 0, width: "100%" }}
               />
             </Box>
           ))}
@@ -397,19 +362,8 @@ export default function FlightFilters({ flightCount = 3 }) {
       {/* Airlines */}
       <FilterSection title="Airlines" icon={<FlightIcon sx={{ fontSize: 16, color:"#6B7280" }} />} hasDivider={false}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-          {[
-            { label: "Azerbaijan Airlines", count: 1 },
-            { label: "CHD", count: 1 },
-            { label: "Gulf Air Bahrain", count: 6 },
-            { label: "Kuwait Airways", count: 4 },
-            { label: "Oman Air", count: 1 },
-            { label: "Qatar Airways", count: 5 },
-            { label: "Saudi Arabian Airlines", count: 7 },
-            { label: "Turkish Airlines", count: 4 },
-            { label: "Uzbekistan Airways", count: 1 },
-            { label: "flydubai", count: 2 }
-          ].map((item) => (
-            <Box key={item.label} sx={{ 
+          {airlinesList.map((airline) => (
+            <Box key={airline} sx={{ 
               display: "flex", 
               alignItems: "center", 
               justifyContent: "space-between",
@@ -425,31 +379,24 @@ export default function FlightFilters({ flightCount = 3 }) {
                   <Checkbox
                     size="small"
                     disableRipple
+                    checked={selectedAirlines.includes(airline)}
+                    onChange={() => handleAirlineChange(airline)}
                     sx={{
                       color: "#D1D5DB",
-                      outline: "none",
-                      boxShadow: "none",
                       "&.Mui-checked": { color: "#3B82F6" },
-                      "&:hover": { bgcolor: "transparent" },
-                      "&.Mui-focusVisible": {
-                        outline: "none",
-                        boxShadow: "none",
-                      },
                       padding: "4px",
-                      "& .MuiSvgIcon-root": { fontSize: 18 }
+                      "& .MuiSvgIcon-root": { fontSize: 18 },
+                      "&:hover": { bgcolor: "transparent" }
                     }}
                   />
                 }
                 label={
                   <Typography component="span" sx={{ fontSize: "0.85rem", color: "#4B5563" }}>
-                    {item.label}
+                    {airline}
                   </Typography>
                 }
                 sx={{ margin: 0 }}
               />
-              <Typography sx={{ fontSize: "0.8rem", color: "#9CA3AF" }}>
-                {item.count}
-              </Typography>
             </Box>
           ))}
         </Box>

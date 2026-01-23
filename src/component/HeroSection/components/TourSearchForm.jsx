@@ -1,7 +1,11 @@
 "use client";
 
+
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import TravellersDropdown from "./TravellersDropDown";
+import { useGlobalContext } from "@/app/context/GlobalContext";
 import {
   MapPin,
   Users,
@@ -170,8 +174,8 @@ const CityDropdown = ({ label, value, onChange }) => {
 
      
 
-      {/* Show suggestions when input is empty and clicked */}
-      {isOpen && !searchTerm && inputValue === "" && (
+      {/* Show suggestions when open */}
+      {isOpen && (
         <ClickAwayListener onClickAway={handleClose}>
           <Paper
             elevation={3}
@@ -191,40 +195,48 @@ const CityDropdown = ({ label, value, onChange }) => {
             }}
           >
             <List dense sx={{ p: 0 }}>
-              {countriesAirports.map((city) => (
-                <ListItem
-                  key={city.code}
-                  onClick={() => handleSelect(city)}
-                  sx={{
-                    px: 1.5,
-                    py: 0.5,
-                    borderBottom: "1px solid #f0f0f0",
-                    "&:last-child": { borderBottom: "none" },
-                    "&:hover": {
-                      backgroundColor: "#f0f7ff",
-                      cursor: "pointer",
-                    },
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-                    <LocationOn sx={{ fontSize: 14, color: "#666", mr: 1 }} />
-                    <Box sx={{ flex: 1 }}>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <Typography sx={{ fontSize: "10px", fontWeight: 600, lineHeight: 1.2, fontFamily: "'Inter', sans-serif" }}>
-                          {city.city}
-                        </Typography>
-                        <Typography sx={{ fontSize: "10px", color: "#1976d2", fontWeight: 700, lineHeight: 1.2, fontFamily: "'Inter', sans-serif" }}>
-                          {city.code}
+              {filteredCities.length > 0 ? (
+                filteredCities.map((city) => (
+                  <ListItem
+                    key={city.code}
+                    onClick={() => handleSelect(city)}
+                    sx={{
+                      px: 1.5,
+                      py: 0.5,
+                      borderBottom: "1px solid #f0f0f0",
+                      "&:last-child": { borderBottom: "none" },
+                      "&:hover": {
+                        backgroundColor: "#f0f7ff",
+                        cursor: "pointer",
+                      },
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+                      <LocationOn sx={{ fontSize: 14, color: "#666", mr: 1 }} />
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <Typography sx={{ fontSize: "10px", fontWeight: 600, lineHeight: 1.2, fontFamily: "'Inter', sans-serif" }}>
+                            {city.city}
+                          </Typography>
+                          <Typography sx={{ fontSize: "10px", color: "#1976d2", fontWeight: 700, lineHeight: 1.2, fontFamily: "'Inter', sans-serif" }}>
+                            {city.code}
+                          </Typography>
+                        </Box>
+                        <Typography sx={{ fontSize: "9px", color: "#666", lineHeight: 1.1, mt: 0.2, fontFamily: "'Inter', sans-serif" }}>
+                          {city.airport}
                         </Typography>
                       </Box>
-                      <Typography sx={{ fontSize: "9px", color: "#666", lineHeight: 1.1, mt: 0.2, fontFamily: "'Inter', sans-serif" }}>
-                        {city.airport}
-                      </Typography>
                     </Box>
-                  </Box>
+                  </ListItem>
+                ))
+              ) : (
+                <ListItem sx={{ py: 1.5 }}>
+                  <Typography sx={{ fontSize: "10px", color: "#666", textAlign: "center", width: "100%" }}>
+                    No cities found
+                  </Typography>
                 </ListItem>
-              ))}
+              )}
             </List>
           </Paper>
         </ClickAwayListener>
@@ -233,10 +245,11 @@ const CityDropdown = ({ label, value, onChange }) => {
   );
 };
 
-const TourSearchForm = () => {
+const TourSearchForm = ({ calendarWidth }) => {
   // ------------------- MEDIA QUERIES -------------------
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { setTourSearchData } = useGlobalContext();
 
   // ------------------- HYDRATION FIX -------------------
   const [mounted, setMounted] = useState(false);
@@ -255,19 +268,31 @@ const TourSearchForm = () => {
 
   // ------------------- DATES -------------------
   const [checkInDate, setCheckInDate] = useState("");
+
   const [checkOutDate, setCheckOutDate] = useState("");
+
+  const router = useRouter();  
 
   // Added refs for date inputs
   const checkInDateRef = useRef(null);
   const checkOutDateRef = useRef(null);
 
   useEffect(() => {
-    const today = new Date();
-    const next = new Date(today);
-    next.setDate(today.getDate() + 1);
-
-    setCheckInDate(today.toISOString().split("T")[0]);
-    setCheckOutDate(next.toISOString().split("T")[0]);
+    const saved = localStorage.getItem("tourSearchData");
+    if (saved) {
+      const data = JSON.parse(saved);
+      setCitySearch(data.city || "");
+      setCheckInDate(data.date || "");
+      if (data.travellers) {
+        setTravellers(data.travellers);
+      }
+      if (data.nationalityCode) {
+        setNationalityCode(data.nationalityCode);
+      }
+    } else {
+      const today = new Date();
+      setCheckInDate(today.toISOString().split("T")[0]);
+    }
   }, []);
 
   // Added date click handler
@@ -276,13 +301,35 @@ const TourSearchForm = () => {
       ref.current.showPicker();
     }
   };
+  
+  const handleSearch = () => {
+    if (!citySearch) {
+      alert("Please select a city.");
+      return;
+    }
+
+    const searchData = {
+      city: citySearch,
+      date: checkInDate,
+      travellers,
+      nationalityCode,
+    };
+
+    setTourSearchData(searchData);
+    localStorage.setItem("tourSearchData", JSON.stringify(searchData));
+
+    // Navigate to tours listing route with all search parameters
+    router.push(`/tours/${citySearch}/${checkInDate}/${travellers.adults}/${travellers.children}/${nationalityCode}`);
+  };
 
   // ------------------- TRAVELLERS -------------------
-  const [travellers, setTravellers] = useState({
-    adults: 1,
-    children: 0,
-    infants: 0,
-  });
+
+    const [travellers, setTravellers] = useState({
+      adults: 1,
+      children: 0,
+      infants: 0,
+    });
+    const [nationalityCode, setNationalityCode] = useState("PK");
 
   const [travellerAnchorEl, setTravellerAnchorEl] = useState(null);
 
@@ -310,6 +357,7 @@ const TourSearchForm = () => {
       width: "100%",
       fontFamily: "'Inter', sans-serif",
       p: isMobile ? 2 : 0,
+      pl: { xs: 3, sm: 1, md: 0, lg: 0 },
     }}>
       {isMobile ? (
         // MOBILE LAYOUT - STACKED COLUMNS
@@ -388,39 +436,16 @@ const TourSearchForm = () => {
 
           {/* TRAVELLERS - Mobile */}
           <Box sx={{width:"88%"}}>
-            <Button
-              fullWidth
-              variant="outlined"
-              size="small"
-              onClick={handleTravellerClick}
-              sx={{ 
-                justifyContent: "space-between", 
-                fontSize: "14px", 
-                textTransform: "none",
-                height: 40,
-                color: "#000000",
-                fontFamily: "'Inter', sans-serif",
-                px: 2,
+            <TravellersDropdown 
+              travellers={travellers} 
+              onTravellersChange={setTravellers} 
+              nationalityCode={nationalityCode}
+              onNationalityChange={setNationalityCode}
+              sx={{
+                width: "100%",
+                fontSize: "14px",
               }}
-              startIcon={<Users size={18} />}
-              endIcon={<ChevronDown size={18} />}
-            >
-              {travellersLabel}
-            </Button>
-            <Menu
-              anchorEl={travellerAnchorEl}
-              open={Boolean(travellerAnchorEl)}
-              onClose={handleTravellerClose}
-              PaperProps={{ 
-                style: { 
-                  width: "90vw", 
-                  padding: 16,
-                  fontFamily: "'Inter', sans-serif",
-                } 
-              }}
-            >
-              {/* Traveller menu content */}
-            </Menu>
+            />
           </Box>
 
           {/* SEARCH BUTTON - MOBILE */}
@@ -433,6 +458,7 @@ const TourSearchForm = () => {
                    <IconButton
                      color="primary"
                      size="small"
+                     onClick={handleSearch}
                      sx={{
                        backgroundColor: "#0b66f9",
                        "&:hover": { backgroundColor: "#000" },
@@ -475,7 +501,7 @@ const TourSearchForm = () => {
           </Grid>
 
           {/* CHECK-IN DATE - Desktop */}
-          <Grid item xs={12} sm={3} width={300}>
+          <Grid item xs={12} sm="auto" sx={{ width: calendarWidth || { xs: "100%",sm: "44%", md: 230, lg: 300 } }}>
             <FormControl fullWidth variant="outlined" size="small">
               <InputLabel 
                 shrink 
@@ -542,6 +568,8 @@ const TourSearchForm = () => {
             <TravellersDropdown 
               travellers={travellers} 
               onTravellersChange={setTravellers} 
+              nationalityCode={nationalityCode}
+              onNationalityChange={setNationalityCode}
               sx={{
                 width: {sm:660, md:"100%", lg:"100%"},
                 minWidth: 195,
@@ -554,6 +582,7 @@ const TourSearchForm = () => {
             <IconButton
               color="primary"
               size="small"
+              onClick={handleSearch}
               sx={{
                 backgroundColor: "#0b66f9",
                 "&:hover": { backgroundColor: "#000" },

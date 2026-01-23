@@ -19,6 +19,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { LocationOn, Search } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
+import { useGlobalContext } from "@/app/context/GlobalContext";
 
 const countriesList = [
   { name: "Pakistan", capital: "Islamabad", code: "PK" },
@@ -149,6 +151,10 @@ const CountryDropdown = ({
               paddingTop: "15px",
               fontSize: "10px",
               fontWeight: 700,
+              "&::placeholder": {
+                color: "#000",
+                opacity: 1,
+              },
             },
             "& .MuiOutlinedInput-notchedOutline": {
               borderColor: "#c0c0c0",
@@ -252,6 +258,30 @@ export default function VisaSearchForm() {
     setCheckInDate(today.toISOString().split("T")[0]);
   }, []);
 
+  const { setVisaSearchData } = useGlobalContext();
+  const router = useRouter();
+
+  const handleSearch = () => {
+    const fromCountry = countriesList.find(c => c.code === fromValue);
+    const toCountry = countriesList.find(c => c.code === toValue);
+    
+    if (!toValue) {
+      alert("Please select a destination country.");
+      return;
+    }
+
+    const searchData = {
+      from: fromCountry?.name || "Pakistan",
+      fromCode: fromValue,
+      to: toCountry?.name || "",
+      toCode: toValue,
+      date: checkInDate
+    };
+
+    setVisaSearchData(searchData);
+    router.push("/visa/submission");
+  };
+
   const handleDateInputClick = (ref) => {
     if (ref.current) {
       ref.current.showPicker();
@@ -282,7 +312,7 @@ export default function VisaSearchForm() {
               width: { 
                 xs: "100%",      // Mobile M & L: full width
                 sm: 330,         // Tablet: fixed 330px
-                md: 295,         // Desktop: fixed 295px
+                md: 265,         // Desktop: fixed 295px
                 lg: 280          // Large Desktop: fixed 280px
               } 
             }}>
@@ -305,7 +335,7 @@ export default function VisaSearchForm() {
               width: { 
                 xs: "100%",      // Mobile M & L: full width
                 sm: 330,         // Tablet: fixed 330px
-                md: 295,         // Desktop: fixed 295px
+                md: 265,         // Desktop: fixed 295px
                 lg: 280          // Large Desktop: fixed 280px
               } 
             }}>
@@ -339,7 +369,7 @@ export default function VisaSearchForm() {
       xs: "100%",      // Mobile M & L: full width
       sm: 330,         // Tablet: fixed 330px
       md: 190,         // Desktop: fixed 190px
-      lg: 210          // Large Desktop: fixed 210px
+      lg: 226          // Large Desktop: fixed 210px
     },
     fontSize: "10px",
     fontWeight: 600,
@@ -387,6 +417,7 @@ export default function VisaSearchForm() {
             <IconButton
               color="primary"
               size="small"
+              onClick={handleSearch}
               sx={{
                 backgroundColor: "#0b66f9",
                 "&:hover": { backgroundColor: "#000" },

@@ -6,30 +6,23 @@ import {
   Typography,
   Paper,
   Button,
-  Chip,
   Rating,
   Divider,
   IconButton,
 } from "@mui/material";
 import {
   LocationOn as LocationIcon,
-  Wifi as WifiIcon,
-  Pool as PoolIcon,
-  LocalParking as ParkingIcon,
+  AccessTime as DurationIcon,
+  Group as GroupIcon,
   CheckCircleOutline as CheckIcon,
-  TrendingDown as DiscountIcon,
   ArrowForward as ArrowIcon,
   ChevronLeft as LeftIcon,
   ChevronRight as RightIcon,
 } from "@mui/icons-material";
-import { useRouter, useParams } from "next/navigation";
 
-export default function HotelCard({ hotel }) {
+export default function TourCard({ tour }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const router = useRouter();
-  const params = useParams();
-  const slug = params.slug || [];
-  const images = hotel.images || [hotel.image];
+  const images = tour.images || [tour.image];
 
   const handleNext = (e) => {
     e.stopPropagation();
@@ -41,18 +34,11 @@ export default function HotelCard({ hotel }) {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  const handleMoreDetails = () => {
-    // Construct the detail URL: /hotels/detail/[hotelId]/[current-slug]
-    const searchParams = slug.join("/");
-    router.push(`/hotels/detail/${hotel.id}/${searchParams}`);
-  };
-
   return (
     <Paper
       elevation={0}
       sx={{
         display: "flex",
-       
         flexDirection: { xs: "column", sm: "row" },
         borderRadius: 2,
         overflow: "hidden",
@@ -70,23 +56,22 @@ export default function HotelCard({ hotel }) {
       {/* Image Section */}
       <Box
         sx={{
-          width: { xs: "100%", sm: 240, md: 220, lg: 240 },
-          height: { xs: 200, sm: "auto" },
+          width: { xs: "100%", sm: 280 , md: 220 , lg: 220 },
+          height: "auto",
+          minHeight: { xs: 180, sm: 180, md: 160, lg: 180 },
           position: "relative",
           bgcolor: "#F3F4F6",
-          flexShrink: 0,
           overflow: "hidden",
         }}
       >
         <Box
           component="img"
           src={images[currentImageIndex]}
-          alt={hotel.name}
+          alt={tour.name}
           sx={{
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            display: "block",
             transition: "opacity 0.3s ease-in-out",
           }}
         />
@@ -150,27 +135,26 @@ export default function HotelCard({ hotel }) {
             </Box>
           </>
         )}
-        {/* Rating Badge */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: 6,
-            left: 6,
-            bgcolor: "rgba(0, 0, 0, 0.7)",
-            color: "white",
-            px: 0.8,
-            py: 0.2,
-            borderRadius: 1,
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            fontSize: "0.65rem",
-            fontWeight: 700,
-          }}
-        >
-          <Box component="span" sx={{ color: "#FBBF24" }}>★</Box>
-          {hotel.rating.toFixed(1)}
-        </Box>
+        {/* Featured Badge */}
+        {tour.featured && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 6,
+              left: 6,
+              bgcolor: "#FBBF24",
+              color: "white",
+              px: 1,
+              py: 0.2,
+              borderRadius: 1,
+              fontSize: "0.65rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+            }}
+          >
+            Featured
+          </Box>
+        )}
         {/* Type Badge */}
         <Box
           sx={{
@@ -188,13 +172,13 @@ export default function HotelCard({ hotel }) {
             letterSpacing: "0.05em",
           }}
         >
-          {hotel.type}s
+          {tour.type}
         </Box>
       </Box>
 
       {/* Content Section */}
-      <Box sx={{ flex: 1, p: { xs: 2, sm: 2, md: 1.2, lg: 2 }, display: "flex", flexDirection: "column" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 0.2 }}>
+      <Box sx={{ flex: 1, p: { xs: 2, sm: 2, md: 1.5, lg: 2 }, display: "flex", flexDirection: "column" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 0.5 }}>
           <Typography sx={{ 
             fontSize: "1rem", 
             fontWeight: 700, 
@@ -205,7 +189,7 @@ export default function HotelCard({ hotel }) {
             WebkitBoxOrient: "vertical",
             overflow: "hidden"
           }}>
-            {hotel.name}
+            {tour.name}
           </Typography>
         </Box>
 
@@ -219,21 +203,29 @@ export default function HotelCard({ hotel }) {
             overflow: "hidden",
             textOverflow: "ellipsis"
           }}>
-            {hotel.location}
+            {tour.location}
           </Typography>
         </Box>
 
-        {/* Stars */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1 }}>
-          <Rating value={hotel.stars} readOnly size="small" sx={{ fontSize: { xs: "0.8rem", md: "0.7rem" }, color: "#FBBF24" }} />
-          <Typography sx={{ fontSize: { xs: "0.7rem", md: "0.6rem" }, color: "#9CA3AF", ml: 0.5 }}>
-            ({hotel.rating.toFixed(1)})
-          </Typography>
+        {/* Rating and Duration */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <Rating value={tour.rating} readOnly size="small" sx={{ fontSize: { xs: "0.8rem", md: "0.7rem" }, color: "#FBBF24" }} />
+                <Typography sx={{ fontSize: { xs: "0.7rem", md: "0.6rem" }, color: "#9CA3AF", ml: 0.5 }}>
+                    ({tour.reviews} Reviews)
+                </Typography>
+            </Box>
+             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <DurationIcon sx={{ fontSize: 13, color: "#9CA3AF" }} />
+                <Typography sx={{ fontSize: { xs: "0.7rem", md: "0.6rem" }, color: "#6B7280" }}>
+                    {tour.duration}
+                </Typography>
+            </Box>
         </Box>
 
-        {/* Amenities */}
+        {/* Features/Amenities */}
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: { xs: 1, md: 0.5 }, mb: { xs: 1, md: 0.5 } }}>
-          {hotel.amenities.map((amenity, index) => (
+          {tour.amenities.map((amenity, index) => (
             <Typography
               key={index}
               sx={{
@@ -245,48 +237,38 @@ export default function HotelCard({ hotel }) {
                 gap: 0.3,
               }}
             >
-              {amenity === "Free WIFI" && <WifiIcon sx={{ fontSize: 11 }} />}
-              {amenity === "Swimming Pool" && <PoolIcon sx={{ fontSize: 11 }} />}
-              {amenity === "Parking" && <ParkingIcon sx={{ fontSize: 11 }} />}
+              <CheckIcon sx={{ fontSize: 11 }} />
               {amenity}
             </Typography>
           ))}
-          {hotel.tags.map((tag, index) => (
-            <Typography
-              key={`tag-${index}`}
-              sx={{
+          <Typography
+             sx={{
                 fontSize: "0.65rem",
-                color: tag.includes("OFF") ? "#DC2626" : "#059669",
+                color: "#059669",
                 fontWeight: 600,
                 display: "flex",
                 alignItems: "center",
                 gap: 0.3,
               }}
             >
-              {tag.includes("Refundable") && <CheckIcon sx={{ fontSize: 11 }} />}
-              {tag.includes("OFF") && <DiscountIcon sx={{ fontSize: 11 }} />}
-              {tag}
+             <GroupIcon sx={{ fontSize: 11 }} />
+             {tour.groupSize}
             </Typography>
-          ))}
         </Box>
 
-        <Divider sx={{ mb: { xs: 1, md: 0.5 }, borderColor: "#F3F4F6" }} />
+        <Divider sx={{ mb: { xs: 1, md: 0.5 }, borderColor: "#F3F4F6", mt: "auto" }} />
 
         {/* Footer info: Price & Button */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", mt: "auto" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", mt: 1 }}>
           <Box>
             <Typography sx={{ fontSize: "0.7rem", color: "#6B7280", mb: 0.1 }}>From</Typography>
             <Typography sx={{ fontSize: "1rem", fontWeight: 700, color: "#1F2937", lineHeight: 1 }}>
-              {hotel.currency} {hotel.price.toFixed(2)}
-            </Typography>
-            <Typography sx={{ fontSize: "0.6rem", color: "#9CA3AF", mt: 0.3 }}>
-              per Night • {hotel.currency} {(hotel.price * hotel.stayDuration).toFixed(2)} Total
+              {tour.currency} {tour.price}
             </Typography>
           </Box>
           <Button
             variant="contained"
             size="small"
-            onClick={handleMoreDetails}
             endIcon={<ArrowIcon sx={{ fontSize: "1rem !important" }} />}
             sx={{
               bgcolor: "#1A53FF",
@@ -295,11 +277,11 @@ export default function HotelCard({ hotel }) {
               textTransform: "none",
               fontWeight: 600,
               fontSize: "0.7rem",
-              px: 1,
+              px: 2,
               py: 1,
             }}
           >
-        More Details
+            Details
           </Button>
         </Box>
       </Box>

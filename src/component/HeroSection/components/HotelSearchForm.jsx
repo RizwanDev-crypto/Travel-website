@@ -27,20 +27,18 @@ import { LocationOn, Search } from "@mui/icons-material";
 import TravellersDropdown from "./TravellersDropDown";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/app/context/GlobalContext";
+import { countriesAirports as countriesAirportsData } from "../../data/countriesAirports";
 
-// Same flat array structure as other forms
-const countriesAirports = [
-  { city: "Dubai", airport: "Dubai International Airport", code: "DXB" },
-  { city: "Abu Dhabi", airport: "Abu Dhabi Intl Airport", code: "AUH" },
-  { city: "Karachi", airport: "Jinnah International Airport", code: "KHI" },
-  { city: "Lahore", airport: "Allama Iqbal Airport", code: "LHE" },
-  { city: "Delhi", airport: "Indira Gandhi International Airport", code: "DEL" },
-  { city: "Mumbai", airport: "Chhatrapati Shivaji Maharaj Airport", code: "BOM" },
-  { city: "Riyadh", airport: "King Khalid Intl Airport", code: "RUH" },
-  { city: "Jeddah", airport: "King Abdulaziz Intl Airport", code: "JED" },
-  { city: "Berlin", airport: "Berlin Brandenburg Airport", code: "BER" },
-  { city: "Frankfurt", airport: "Frankfurt Airport", code: "FRA" },
-];
+
+// Flatten the countries data to get all cities
+const countriesAirports = countriesAirportsData.flatMap(country => 
+  country.cities.map(city => ({
+    city: city.city,
+    airport: city.airport,
+    code: city.code,
+    country: country.country
+  }))
+);
 
 // Custom CityDropdown Component with integrated search
 const CityDropdown = ({ label, value, onChange }) => {
@@ -212,7 +210,7 @@ const CityDropdown = ({ label, value, onChange }) => {
                <ListItem
   key={city.code}
   onMouseDown={(e) => {
-    e.preventDefault();   // 👈 stops ClickAway race
+    e.preventDefault();   //  stops ClickAway race
     handleSelect(city);
   }}
                     sx={{
@@ -256,16 +254,34 @@ const CityDropdown = ({ label, value, onChange }) => {
   );
 };
 
-const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) => {
+const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 290, lg: 357 } }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   
-  const [citySearch, setCitySearch] = useState("");
-  const [selectedCity, setSelectedCity] = useState(null);
+  /* ===================== SINGLE FORM STATE ===================== */
+  const [formState, setFormState] = useState({
+    citySearch: "",
+    checkInDate: "",
+    checkOutDate: "",
+    nationalityCode: "PK",
+  });
   const [travellers, setTravellers] = useState({ adults: 2, children: 0, infants: 0 });
-  const [checkInDate, setCheckInDate] = useState("");
-  const [checkOutDate, setCheckOutDate] = useState("");
-  const [nationalityCode, setNationalityCode] = useState("PK");
+  
+  const handleChange = (field, value) => {
+    setFormState((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const {
+    citySearch,
+    checkInDate,
+    checkOutDate,
+    nationalityCode,
+  } = formState;
+
+  const [selectedCity, setSelectedCity] = useState(null);
   
   const router = useRouter();
   const { setHotelSearchData } = useGlobalContext();
@@ -280,8 +296,29 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
 
-    setCheckInDate(today.toISOString().split("T")[0]);
-    setCheckOutDate(tomorrow.toISOString().split("T")[0]);
+    setFormState(prev => ({
+      ...prev,
+      checkInDate: today.toISOString().split("T")[0],
+      checkOutDate: tomorrow.toISOString().split("T")[0]
+    }));
+  }, []);
+
+  // ✅ Load from localStorage on Hotel Listing page
+  useEffect(() => {
+    const saved = localStorage.getItem("hotelSearchData");
+    if (saved) {
+      const data = JSON.parse(saved);
+      setFormState({
+        citySearch: data.city || "",
+        checkInDate: data.checkIn || "",
+        checkOutDate: data.checkOut || "",
+        nationalityCode: data.nationalityCode || "PK",
+      });
+      
+      if (data.travellers) {
+        setTravellers(data.travellers);
+      }
+    }
   }, []);
 
   // Check-out date ko automatically update karein jab check-in date change ho
@@ -290,7 +327,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
     if (checkInDate && checkOutDate) {
       if (checkOutDate < checkInDate) {
         // Agar check-out date check-in date se pehle hai, toh check-out date ko check-in date kar do
-        setCheckOutDate(checkInDate);
+        handleChange("checkOutDate", checkInDate);
       }
     }
   }, [checkInDate]);
@@ -304,7 +341,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
 
   // Handle city selection
   const handleCityChange = (cityCode) => {
-    setCitySearch(cityCode);
+    handleChange("citySearch", cityCode);
     const city = countriesAirports.find(c => c.code === cityCode);
     setSelectedCity(city);
   };
@@ -367,7 +404,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
                   type="date"
                   value={checkInDate}
                   onChange={(e) => {
-                    setCheckInDate(e.target.value);
+                    handleChange("checkInDate", e.target.value);
                     setTimeout(() => {
                       if (checkOutDateRef.current) {
                         checkOutDateRef.current.showPicker();
@@ -436,7 +473,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
                 <OutlinedInput
                   type="date"
                   value={checkOutDate}
-                  onChange={(e) => setCheckOutDate(e.target.value)}
+                  onChange={(e) => handleChange("checkOutDate", e.target.value)}
                   inputRef={checkOutDateRef}
                   onClick={() => handleDateInputClick(checkOutDateRef)}
                   // ✅ Previous dates disable karein - Check-In date se pehle ki dates
@@ -491,7 +528,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
               travellers={travellers} 
               onTravellersChange={setTravellers}
               nationalityCode={nationalityCode}
-              onNationalityChange={setNationalityCode}
+              onNationalityChange={(val) => handleChange("nationalityCode", val)}
               mode="hotel"
               sx={{
                 fontFamily: "'Inter', sans-serif",
@@ -579,7 +616,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
                 type="date"
                 value={checkInDate}
                 onChange={(e) => {
-                  setCheckInDate(e.target.value);
+                  handleChange("checkInDate", e.target.value);
                   setTimeout(() => {
                     if (checkOutDateRef.current) {
                       checkOutDateRef.current.showPicker();
@@ -637,7 +674,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
               <OutlinedInput
                 type="date"
                 value={checkOutDate}
-                onChange={(e) => setCheckOutDate(e.target.value)}
+                onChange={(e) => handleChange("checkOutDate", e.target.value)}
                 inputRef={checkOutDateRef}
                 onClick={() => handleDateInputClick(checkOutDateRef)}
                 // ✅ Previous dates disable karein - Check-In date se pehle ki dates
@@ -689,7 +726,7 @@ const HotelSearchForm = ({ calendarWidth = { xs: "100%", md: 350, lg: 345 } }) =
               travellers={travellers}
               onTravellersChange={setTravellers}
               nationalityCode={nationalityCode}
-              onNationalityChange={setNationalityCode}
+              onNationalityChange={(val) => handleChange("nationalityCode", val)}
               mode="hotel"
               sx={{
                 minWidth: {sm: 429, md: 180, lg: 180},

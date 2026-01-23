@@ -31,7 +31,7 @@ export default function TravelTabs({ activeTab, setActiveTab }) {
         backdropFilter: "blur(4px)",
         backgroundColor: "rgba(255,255,255,0.1)",
         boxShadow: 5,
-        mt:{xs:4,sm:-4, md:0, lg:0}
+        mt:{xs:4,sm:2, md:0, lg:0}
       }}
     >
       {tabs.map((tab) => (

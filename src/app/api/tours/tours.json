@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "name": "Dubai Desert Safari",
+    "location": "Dubai, UAE",
+    "duration": "6 Hours",
+    "price": 150,
+    "rating": 4.8,
+    "reviews": 124,
+    "images": [
+      "https://images.unsplash.com/photo-1509233725247-49e657c54213?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1489447068241-b3490214e879?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Adventure",
+    "groupSize": "Small Group",
+    "amenities": ["Pick-up & Drop-off", "Dinner", "Camel Ride"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 2,
+    "name": "Paris City Tour",
+    "location": "Paris, France",
+    "duration": "3 Hours",
+    "price": 80,
+    "rating": 4.5,
+    "reviews": 89,
+    "images": [
+      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1503917988258-f87a78e3c995?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1431274172761-fca41d930114?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "City Tour",
+    "groupSize": "Large Group",
+    "amenities": ["Guide", "Transport"],
+    "featured": false,
+    "currency": "$"
+  },
+  {
+    "id": 3,
+    "name": "Grand Canyon Helicopter Tour",
+    "location": "Arizona, USA",
+    "duration": "45 Mins",
+    "price": 350,
+    "rating": 4.9,
+    "reviews": 210,
+    "images": [
+      "https://images.unsplash.com/photo-1527333656061-ca7adf608ae1?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1472396961695-1ad2a6262d4a?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Helicopter",
+    "groupSize": "Private",
+    "amenities": ["Headsets", "Narration"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 4,
+    "name": "Colosseum & Ancient Rome",
+    "location": "Rome, Italy",
+    "duration": "2.5 Hours",
+    "price": 65,
+    "rating": 4.7,
+    "reviews": 156,
+    "images": [
+      "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1529260830199-42c24126f198?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1525874684015-58379d421a52?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1515542641795-d6022417743b?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "History",
+    "groupSize": "Medium Group",
+    "amenities": ["Skip-the-line", "Guide"],
+    "featured": false,
+    "currency": "$"
+  },
+  {
+    "id": 5,
+    "name": "Tokyo Food Tour",
+    "location": "Tokyo, Japan",
+    "duration": "3.5 Hours",
+    "price": 120,
+    "rating": 4.9,
+    "reviews": 95,
+    "images": [
+      "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1536768139911-e290a59011e4?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Food",
+    "groupSize": "Small Group",
+    "amenities": ["Food Tasting", "Drinks", "Guide"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 6,
+    "name": "Swiss Alps Train Adventure",
+    "location": "Lucerne, Switzerland",
+    "duration": "10 Hours",
+    "price": 220,
+    "rating": 4.9,
+    "reviews": 178,
+    "images": [
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1483728642387-ea41014e040a?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Sightseeing",
+    "groupSize": "Medium Group",
+    "amenities": ["Train Pass", "Lunch", "Guide"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 7,
+    "name": "Amazon Rainforest Expedition",
+    "location": "Manaus, Brazil",
+    "duration": "3 Days",
+    "price": 450,
+    "rating": 4.7,
+    "reviews": 64,
+    "images": [
+      "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1440778303588-435521a205bc?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Nature",
+    "groupSize": "Private",
+    "amenities": ["Accommodation", "All Meals", "Guide"],
+    "featured": false,
+    "currency": "$"
+  },
+  {
+    "id": 8,
+    "name": "Great Barrier Reef Snorkeling",
+    "location": "Cairns, Australia",
+    "duration": "7 Hours",
+    "price": 180,
+    "rating": 4.8,
+    "reviews": 312,
+    "images": [
+      "https://images.unsplash.com/photo-1544551763-47a184117db7?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1498092651296-641e88c3b057?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1520113282670-34fa7908b98f?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Water Sports",
+    "groupSize": "Large Group",
+    "amenities": ["Equipment", "Buffet Lunch", "Instructor"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 9,
+    "name": "Northern Lights Hunt",
+    "location": "Reykjavik, Iceland",
+    "duration": "4 Hours",
+    "price": 95,
+    "rating": 4.6,
+    "reviews": 245,
+    "images": [
+      "https://images.unsplash.com/photo-1483347756197-71ef80e95f73?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1531366930477-4fbd7326bc93?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Adventure",
+    "groupSize": "Small Group",
+    "amenities": ["Hot Drinks", "Photos", "Transport"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 10,
+    "name": "Machu Picchu Day Trip",
+    "location": "Cusco, Peru",
+    "duration": "14 Hours",
+    "price": 290,
+    "rating": 4.9,
+    "reviews": 420,
+    "images": [
+      "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1574791320411-d1393b043973?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "History",
+    "groupSize": "Small Group",
+    "amenities": ["Entrance Fee", "Train Ticket", "Guide"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 11,
+    "name": "Safari in Serengeti",
+    "location": "Serengeti, Tanzania",
+    "duration": "2 Days",
+    "price": 600,
+    "rating": 4.8,
+    "reviews": 110,
+    "images": [
+      "https://images.unsplash.com/photo-1516422204961-0d336829158c?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1523592121529-f6d1ebee57a2?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1490237014491-8aa29811ea54?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Wildlife",
+    "groupSize": "Private",
+    "amenities": ["Jeep Safari", "Lodging", "Meals"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 12,
+    "name": "Santorini Sunset Cruise",
+    "location": "Santorini, Greece",
+    "duration": "5 Hours",
+    "price": 110,
+    "rating": 4.7,
+    "reviews": 189,
+    "images": [
+      "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1469796466635-455ede028ca8?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Romantic",
+    "groupSize": "Small Group",
+    "amenities": ["Dinner", "Wine", "Snorkeling"],
+    "featured": false,
+    "currency": "$"
+  },
+  {
+    "id": 13,
+    "name": "New York City Skyline Tour",
+    "location": "New York, USA",
+    "duration": "2 Hours",
+    "price": 55,
+    "rating": 4.5,
+    "reviews": 230,
+    "images": [
+      "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1522083165195-3424ed129620?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "City Tour",
+    "groupSize": "Large Group",
+    "amenities": ["Map", "Audio Guide"],
+    "featured": false,
+    "currency": "$"
+  },
+  {
+    "id": 14,
+    "name": "Pyramids of Giza Tour",
+    "location": "Cairo, Egypt",
+    "duration": "5 Hours",
+    "price": 75,
+    "rating": 4.8,
+    "reviews": 340,
+    "images": [
+      "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1539186607619-df476afe3ff1?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1568322422622-f321c776ceae?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "History",
+    "groupSize": "Medium Group",
+    "amenities": ["Camel Ride", "Guide", "Entry"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 15,
+    "name": "Bora Bora Lagoon Tour",
+    "location": "Bora Bora, French Polynesia",
+    "duration": "4 Hours",
+    "price": 140,
+    "rating": 4.9,
+    "reviews": 88,
+    "images": [
+      "https://images.unsplash.com/photo-1505881502353-a1986add3732?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1534008757030-27299c4371b6?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Water Sports",
+    "groupSize": "Private",
+    "amenities": ["Boat", "Snacks", "Kayaking"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 16,
+    "name": "Banff National Park Hiking",
+    "location": "Banff, Canada",
+    "duration": "6 Hours",
+    "price": 85,
+    "rating": 4.7,
+    "reviews": 155,
+    "images": [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1439337153520-7082a56a81f4?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Nature",
+    "groupSize": "Small Group",
+    "amenities": ["Park Pass", "Guide", "Equipment"],
+    "featured": false,
+    "currency": "$"
+  },
+  {
+    "id": 17,
+    "name": "Street Food Experience",
+    "location": "Bangkok, Thailand",
+    "duration": "3 Hours",
+    "price": 45,
+    "rating": 4.8,
+    "reviews": 275,
+    "images": [
+      "https://images.unsplash.com/photo-1540648639573-8c848de23f0a?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1506466010722-395aa2bef877?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1518131394553-c46bc6ec6728?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1511747712399-5264b1d69d45?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Food",
+    "groupSize": "Medium Group",
+    "amenities": ["Tastings", "Drinks", "Market Visit"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 18,
+    "name": "Petra Night Tour",
+    "location": "Petra, Jordan",
+    "duration": "2.5 Hours",
+    "price": 35,
+    "rating": 4.6,
+    "reviews": 195,
+    "images": [
+      "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1545105511-df338c7f7d29?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1512411516223-9993309a6fc4?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1526749837599-b4efa9fd259e?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Culture",
+    "groupSize": "Large Group",
+    "amenities": ["Candlelight", "Tea", "Stories"],
+    "featured": false,
+    "currency": "$"
+  },
+  {
+    "id": 19,
+    "name": "Bali Temple Tour",
+    "location": "Bali, Indonesia",
+    "duration": "8 Hours",
+    "price": 60,
+    "rating": 4.7,
+    "reviews": 215,
+    "images": [
+      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1537953391640-642ff794a7cb?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "Culture",
+    "groupSize": "Small Group",
+    "amenities": ["Driver", "Entry Fees", "Water"],
+    "featured": true,
+    "currency": "$"
+  },
+  {
+    "id": 20,
+    "name": "London Eye & River Cruise",
+    "location": "London, UK",
+    "duration": "3 Hours",
+    "price": 70,
+    "rating": 4.6,
+    "reviews": 380,
+    "images": [
+      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1513360309081-36fa09825b44?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "type": "City Tour",
+    "groupSize": "Large Group",
+    "amenities": ["Tickets", "Guide", "Map"],
+    "featured": false,
+    "currency": "$"
+  }
+]

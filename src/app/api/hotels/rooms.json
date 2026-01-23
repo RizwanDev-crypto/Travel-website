@@ -1,0 +1,279 @@
+[
+  {
+    "id": 1,
+    "hotelId": 1,
+    "name": "Studio, 2 Queen Beds (Haram View)",
+    "rating": 10.0,
+    "ratingLabel": "Exceptional",
+    "reviewsCount": 1,
+    "images": [
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "640 sq ft" },
+      { "type": "sleeps", "text": "Sleeps 4" },
+      { "type": "beds", "text": "2 Queen Beds" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 500,
+    "priceTotal": 9658,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": null
+  },
+  {
+    "id": 2,
+    "hotelId": 1,
+    "name": "Executive Suite, 2 Bedrooms",
+    "rating": 9.5,
+    "ratingLabel": "Fantastic",
+    "reviewsCount": 12,
+    "images": [
+      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "1313 sq ft" },
+      { "type": "room", "text": "2 bedrooms" },
+      { "type": "sleeps", "text": "Sleeps 4" },
+      { "type": "beds", "text": "2 King Beds" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 1211,
+    "priceTotal": 23399,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": null
+  },
+  {
+    "id": 3,
+    "hotelId": 1,
+    "name": "Suite, 3 Bedrooms (Ambassador)",
+    "rating": 10.0,
+    "ratingLabel": "Exceptional",
+    "reviewsCount": 1,
+    "images": [
+      "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "1352 sq ft" },
+      { "type": "room", "text": "3 bedrooms" },
+      { "type": "sleeps", "text": "Sleeps 6" },
+      { "type": "beds", "text": "1 Double Bed" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 1370,
+    "priceTotal": 26472,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": null
+  },
+  {
+    "id": 4,
+    "hotelId": 20,
+    "name": "Studio, 2 Queen Beds (Haram View)",
+    "rating": 10.0,
+    "ratingLabel": "Exceptional",
+    "reviewsCount": 1,
+    "images": [
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "640 sq ft" },
+      { "type": "sleeps", "text": "Sleeps 4" },
+      { "type": "beds", "text": "2 Queen Beds" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 500,
+    "priceTotal": 9658,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": null
+  },
+  {
+    "id": 5,
+    "hotelId": 20,
+    "name": "Executive Suite, 2 Bedrooms",
+    "rating": 9.5,
+    "ratingLabel": "Fantastic",
+    "reviewsCount": 12,
+    "images": [
+      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "1313 sq ft" },
+      { "type": "room", "text": "2 bedrooms" },
+      { "type": "sleeps", "text": "Sleeps 4" },
+      { "type": "beds", "text": "2 King Beds" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 1211,
+    "priceTotal": 23399,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": null
+  },
+  {
+    "id": 6,
+    "hotelId": 20,
+    "name": "Suite, 3 Bedrooms (Ambassador)",
+    "rating": 10.0,
+    "ratingLabel": "Exceptional",
+    "reviewsCount": 1,
+    "images": [
+      "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "1352 sq ft" },
+      { "type": "room", "text": "3 bedrooms" },
+      { "type": "sleeps", "text": "Sleeps 6" },
+      { "type": "beds", "text": "1 Double Bed" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 1370,
+    "priceTotal": 26472,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": null
+  },
+  {
+    "id": 7,
+    "hotelId": 20,
+    "name": "Presidential Suite, Panoramic View",
+    "rating": 9.9,
+    "ratingLabel": "Exceptional",
+    "reviewsCount": 8,
+    "images": [
+      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1591088398332-8a77d3996135?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "2200 sq ft" },
+      { "type": "room", "text": "4 bedrooms" },
+      { "type": "sleeps", "text": "Sleeps 8" },
+      { "type": "beds", "text": "4 King Beds" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 2500,
+    "priceTotal": 48500,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 120 }
+    ],
+    "leftCount": 1
+  },
+  {
+    "id": 8,
+    "hotelId": 20,
+    "name": "Family Room, Connected Units",
+    "rating": 8.8,
+    "ratingLabel": "Excellent",
+    "reviewsCount": 24,
+    "images": [
+      "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "850 sq ft" },
+      { "type": "room", "text": "2 connected rooms" },
+      { "type": "sleeps", "text": "Sleeps 5" },
+      { "type": "beds", "text": "1 King & 3 Twin Beds" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 650,
+    "priceTotal": 12400,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": null
+  },
+  {
+    "id": 9,
+    "hotelId": 20,
+    "name": "Junior Suite, City View",
+    "rating": 9.2,
+    "ratingLabel": "Superb",
+    "reviewsCount": 15,
+    "images": [
+      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=800&h=600",
+      "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?auto=format&fit=crop&q=80&w=800&h=600"
+    ],
+    "amenities": [
+      { "type": "parking", "text": "Free valet parking" },
+      { "type": "size", "text": "450 sq ft" },
+      { "type": "room", "text": "1 bedroom" },
+      { "type": "sleeps", "text": "Sleeps 2" },
+      { "type": "beds", "text": "1 King Bed" },
+      { "type": "payment", "text": "Reserve now, pay later" },
+      { "type": "wifi", "text": "Free WiFi" }
+    ],
+    "refundability": "Fully refundable",
+    "refundableUntil": "Before Thu, Feb 12",
+    "priceNightly": 380,
+    "priceTotal": 7350,
+    "currency": "USD",
+    "extras": [
+      { "id": "no_extras", "name": "No extras", "price": 0 },
+      { "id": "breakfast", "name": "Breakfast", "price": 87 }
+    ],
+    "leftCount": 3
+  }
+]

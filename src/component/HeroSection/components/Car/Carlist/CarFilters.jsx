@@ -4,23 +4,21 @@ import {
   Box,
   Typography,
   Paper,
-  IconButton,
-  Chip,
   Button,
   TextField,
   FormControlLabel,
   Checkbox,
   Slider,
   Divider,
-  Collapse
+  Collapse,
+  Chip
 } from "@mui/material";
 import {
   Tune as TuneIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
   Search as SearchIcon,
-  Star as StarIcon,
-  Hotel as HotelIcon,
+  DirectionsCar as CarIcon,
   PaymentsOutlined as PaymentsOutlinedIcon
 } from "@mui/icons-material";
 import { useState } from "react";
@@ -56,17 +54,15 @@ const FilterSection = ({ title, icon, defaultOpen = true, children, hasDivider =
   );
 };
 
-export default function HotelFilters({ 
-  hotelCount = 1,
+export default function CarFilters({ 
+  carCount = 1,
   searchName = "",
   onSearchNameChange = () => {},
-  priceRange = [0, 10000],
+  priceRange = [0, 200],
   onPriceChange = () => {},
   selectedTypes = [],
   onTypesChange = () => {},
-  selectedStars = [],
-  onStarsChange = () => {},
-  hotelTypes = []
+  carTypes = []
 }) {
 
   const handlePriceChange = (event, newValue) => {
@@ -80,18 +76,10 @@ export default function HotelFilters({
     onTypesChange(newTypes);
   };
 
-  const handleStarChange = (star) => {
-    const newStars = selectedStars.includes(star)
-      ? selectedStars.filter(s => s !== star)
-      : [...selectedStars, star];
-    onStarsChange(newStars);
-  };
-
   const handleClear = () => {
     onSearchNameChange("");
-    onPriceChange([0, 10000]);
+    onPriceChange([0, 200]);
     onTypesChange([]);
-    onStarsChange([]);
   };
 
   return (
@@ -118,7 +106,7 @@ export default function HotelFilters({
             Filters
           </Typography>
           <Chip
-            label={hotelCount}
+            label={carCount}
             size="small"
             sx={{
               color: "#1E40AF",
@@ -158,7 +146,7 @@ export default function HotelFilters({
         <TextField
           fullWidth
           size="small"
-          placeholder="Type Hotel Name..."
+          placeholder="Type Car Name..."
           value={searchName}
           onChange={(e) => onSearchNameChange(e.target.value)}
           sx={{
@@ -195,7 +183,7 @@ export default function HotelFilters({
             value={priceRange}
             onChange={handlePriceChange}
             min={0}
-            max={10000}
+            max={200}
             valueLabelDisplay="auto"
             sx={{
               height: 6,
@@ -235,16 +223,16 @@ export default function HotelFilters({
               ${priceRange[0]} - ${priceRange[1]}
             </Typography>
             <Typography variant="caption" sx={{ color: "#6B7280", textAlign: "center", display: "block", mt: 1 }}>
-              {hotelCount} hotel{hotelCount !== 1 ? 's' : ''} in range
+              {carCount} car{carCount !== 1 ? 's' : ''} in range
             </Typography>
           </Box>
         </Box>
       </FilterSection>
 
-      {/* Accommodation Type */}
-      <FilterSection title="Accommodation Type" icon={<HotelIcon sx={{ fontSize: 18 }} />}>
+      {/* Car Type */}
+      <FilterSection title="Car Type" icon={<CarIcon sx={{ fontSize: 18 }} />} hasDivider={false}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-          {hotelTypes.map((type) => (
+          {carTypes.map((type) => (
             <Box key={type} sx={{ 
               display: "flex", 
               alignItems: "center", 
@@ -282,54 +270,6 @@ export default function HotelFilters({
                   />
                 }
                 label={<Typography component="span" sx={{ fontSize: "0.85rem", color: "#4B5563" }}>{type}</Typography>}
-                sx={{ margin: 0 }}
-              />
-            </Box>
-          ))}
-        </Box>
-      </FilterSection>
-
-      {/* Star Rating */}
-      <FilterSection title="Star Rating" icon={<StarIcon sx={{ fontSize: 18 }} />} hasDivider={false}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-          {[5, 4, 3, 2, 1].map((star) => (
-            <Box key={star} sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between',
-              cursor: "pointer",
-              "&:hover": {
-                "& .MuiCheckbox-root": {
-                  color: "#3B82F6",
-                }
-              }
-            }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    size="small"
-                    disableRipple
-                    checked={selectedStars.includes(star)}
-                    onChange={() => handleStarChange(star)}
-                    sx={{
-                      color: "#D1D5DB",
-                      outline: "none",
-                      boxShadow: "none",
-                      "&:hover": {
-                        backgroundColor: "transparent", 
-                      },
-                      "&.Mui-checked": { 
-                        color: "#3B82F6",
-                        "&:hover": {
-                          backgroundColor: "transparent", 
-                        }
-                      },
-                      padding: "4px",
-                      "& .MuiSvgIcon-root": { fontSize: 18 }
-                    }}
-                  />
-                }
-                label={<Typography component="span" sx={{ fontSize: "0.85rem", color: "#4B5563" }}>{star} Star</Typography>}
                 sx={{ margin: 0 }}
               />
             </Box>
