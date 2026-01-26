@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Typography,
@@ -21,8 +22,13 @@ import {
 } from "@mui/icons-material";
 
 export default function TourCard({ tour }) {
+  const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = tour.images || [tour.image];
+
+  const handleDetailsClick = () => {
+    router.push(`/tours/details/${tour.id}`);
+  };
 
   const handleNext = (e) => {
     e.stopPropagation();
@@ -269,6 +275,7 @@ export default function TourCard({ tour }) {
           <Button
             variant="contained"
             size="small"
+            onClick={handleDetailsClick}
             endIcon={<ArrowIcon sx={{ fontSize: "1rem !important" }} />}
             sx={{
               bgcolor: "#1A53FF",

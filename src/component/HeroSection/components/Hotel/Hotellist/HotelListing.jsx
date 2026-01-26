@@ -81,6 +81,8 @@ export default function HotelListing({ slug = [] }) {
         setAnchorEl(null);
     };
 
+    const [activeView, setActiveView] = useState("details");
+
     return (
         <Box sx={{ 
             maxWidth: { xs: "100%", sm: "100%", md: "820px", lg: "910px" }, 
@@ -90,24 +92,25 @@ export default function HotelListing({ slug = [] }) {
             fontFamily: "'Inter', sans-serif",
             "& .MuiTypography-root": { fontFamily: "inherit" }
         }}>
-            {/* Search Form Container */}
-            <Box sx={{ 
-                mb: 2, 
-                mt: 2, 
-                p: { xs: 0, lg: 1 },
-                border: "1px solid #e0e0e0", 
-                borderRadius: 2,
-                 
-            }}>
-                <HotelSearchForm calendarWidth={{ xs: "100%",sm: "98%", md: 280, lg: 356}} />
-            </Box>
+            {/* Search Form Container - Hidden when in booking view */}
+            {activeView !== "booking" && (
+                <Box sx={{ 
+                    mb: 2, 
+                    mt: 2, 
+                    p: { xs: 0, lg: 1 },
+                    border: "1px solid #e0e0e0", 
+                    borderRadius: 2,
+                }}>
+                    <HotelSearchForm calendarWidth={{ xs: "100%",sm: "98%", md: 280, lg: 356, xl: 352}} />
+                </Box>
+            )}
 
             {/* Main Layout: Filters (Left) + Results (Right) */}
             <Box sx={{ 
                 display: "flex", 
                 flexDirection: { xs: "column", md: "row" },
                 gap: { xs: 2, md: 7,lg: 6 },
-                mt: 3
+                mt: activeView === "booking" ? 0 : 3
             }}>
                 {/* Left: Filters Sidebar - Hidden in detail mode */}
                 {slug[0] !== "detail" && (
@@ -140,6 +143,7 @@ export default function HotelListing({ slug = [] }) {
                                 const searchParams = slug.slice(2).join("/");
                                 router.push(`/hotels/${searchParams}`);
                             }}
+                            onViewChange={setActiveView}
                         />
                     ) : (
                         <>

@@ -44,9 +44,10 @@ import {
   Hotel as SingleBedIcon
 } from "@mui/icons-material";
 import TravellersDropDown from "../../TravellersDropDown";
+import HotelBooking from "./HotelBooking";
 import { useState, useEffect, useRef } from "react";
 
-export default function HotelDetails({ hotel, isLoading, onBack }) {
+export default function HotelDetails({ hotel, isLoading, onBack, onViewChange }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [galleryImages, setGalleryImages] = useState([]);
   const [checkIn, setCheckIn] = useState("");
@@ -54,6 +55,14 @@ export default function HotelDetails({ hotel, isLoading, onBack }) {
   const [travellers, setTravellers] = useState({ adults: 2, children: 0, rooms: 1 });
   const [selectedFilter, setSelectedFilter] = useState("All rooms");
   const [activeTab, setActiveTab] = useState("Overview");
+  const [view, setView] = useState("details");
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
+  useEffect(() => {
+    if (onViewChange) {
+      onViewChange(view);
+    }
+  }, [view, onViewChange]);
 
   // Refs for smooth navigation
   const overviewRef = useRef(null);
@@ -361,6 +370,11 @@ export default function HotelDetails({ hotel, isLoading, onBack }) {
             <Button 
               variant="contained" 
               fullWidth
+              onClick={() => {
+                setSelectedRoom(room);
+                setView("booking");
+                window.scrollTo(0, 0);
+              }}
               sx={{ 
                 bgcolor: "#004CB0", 
                 borderRadius: 2, 
@@ -419,6 +433,19 @@ export default function HotelDetails({ hotel, isLoading, onBack }) {
 
   const handleNext = () => setCurrentImageIndex((prev) => (prev + 1) % images.length);
   const handlePrev = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+
+  if (view === "booking") {
+    return (
+      <HotelBooking 
+        hotel={hotel}
+        room={selectedRoom}
+        travellers={travellers}
+        checkIn={checkIn}
+        checkOut={checkOut}
+        onBack={() => setView("details")}
+      />
+    );
+  }
 
   return (
     <Box sx={{ pb: 4 }}>
@@ -590,6 +617,7 @@ export default function HotelDetails({ hotel, isLoading, onBack }) {
               </Box>
               <Button 
                 variant="contained" 
+                onClick={() => handleTabClick("Rooms", roomsRef)}
                 sx={{ 
                   bgcolor: "#004CB0",
                   borderRadius: 50,
@@ -1118,55 +1146,78 @@ export default function HotelDetails({ hotel, isLoading, onBack }) {
             </Box>
 
             {/* Filter Chips Horizontal Scroll */}
-            <Box sx={{ 
-              display: "flex", 
-              justifyContent: "space-between", 
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: 2
-            }}>
-              <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 1 }}>
-                {["All rooms", "2 beds", "3+ beds", "1 bed"].map((filter) => (
-                  <Chip
-                    key={filter}
-                    label={filter}
-                    onClick={() => setSelectedFilter(filter)}
-                    sx={{ 
-                      borderRadius: 50,
-                      px: 1,
-                      bgcolor: selectedFilter === filter ? "#1F2937" : "white",
-                      color: selectedFilter === filter ? "white" : "#1F2937",
-                      border: "1px solid #D1D5DB",
-                      fontWeight: 500,
-                      fontSize: "0.75rem",
-                      "&:hover": { 
-                        bgcolor: selectedFilter === filter ? "#1F2937" : "#F3F4F6" 
-                      }
-                    }}
-                  />
-                ))}
-              </Box>
-              <Typography sx={{ fontSize: "0.75rem", color: "#6B7280" }}>
-                Showing 12 of 12 rooms
-              </Typography>
-            </Box>
+            {(() => {
+              const getBedCount = (room) => {
+                const bedsAmenity = room.amenities.find(a => a.type === "beds");
+                if (!bedsAmenity) return 0;
+                const numbers = bedsAmenity.text.match(/\d+/g);
+                if (!numbers) return 1;
+                return numbers.reduce((sum, num) => sum + parseInt(num), 0);
+              };
 
-            {/* Room Cards Grid */}
-            <Box sx={{ mt: 3 }}>
-              {roomsLoading ? (
-                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                  <CircularProgress size={30} sx={{ color: "#004CB0" }} />
-                </Box>
-              ) : (
-                <Grid container spacing={1}>
-                  {rooms.map((room) => (
-                    <Grid item xs={4} sm={4} md={4}  key={room.id}>
-                      <RoomCard room={room} />
-                    </Grid>
-                  ))}
-                </Grid>
-              )}
-            </Box>
+              const filteredRooms = rooms.filter(room => {
+                if (selectedFilter === "All rooms") return true;
+                const bedCount = getBedCount(room);
+                if (selectedFilter === "1 bed") return bedCount === 1;
+                if (selectedFilter === "2 beds") return bedCount === 2;
+                if (selectedFilter === "3+ beds") return bedCount >= 3;
+                return true;
+              });
+
+              return (
+                <>
+                  <Box sx={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 2
+                  }}>
+                    <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 1 }}>
+                      {["All rooms", "2 beds", "3+ beds", "1 bed"].map((filter) => (
+                        <Chip
+                          key={filter}
+                          label={filter}
+                          onClick={() => setSelectedFilter(filter)}
+                          sx={{ 
+                            borderRadius: 50,
+                            px: 1,
+                            bgcolor: selectedFilter === filter ? "#1F2937" : "white",
+                            color: selectedFilter === filter ? "white" : "#1F2937",
+                            border: "1px solid #D1D5DB",
+                            fontWeight: 500,
+                            fontSize: "0.75rem",
+                            "&:hover": { 
+                              bgcolor: selectedFilter === filter ? "#1F2937" : "#F3F4F6" 
+                            }
+                          }}
+                        />
+                      ))}
+                    </Box>
+                    <Typography sx={{ fontSize: "0.75rem", color: "#6B7280" }}>
+                      Showing {filteredRooms.length} of {rooms.length} rooms
+                    </Typography>
+                  </Box>
+
+                  {/* Room Cards Grid */}
+                  <Box sx={{ mt: 3 }}>
+                    {roomsLoading ? (
+                      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                        <CircularProgress size={30} sx={{ color: "#004CB0" }} />
+                      </Box>
+                    ) : (
+                      <Grid container spacing={1}>
+                        {filteredRooms.map((room) => (
+                          <Grid item xs={12} sm={6} md={4} key={room.id}>
+                            <RoomCard room={room} />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    )}
+                  </Box>
+                </>
+              );
+            })()}
           </Grid>
            {/* Policies Section */}
       <Box sx={{ mt: 6, px: { xs: 2, md: 3 } }} ref={policyRef}>
