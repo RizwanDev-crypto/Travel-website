@@ -48,7 +48,7 @@ const FilterSection = ({ title, icon, defaultOpen = true, children, hasDivider =
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           {icon && <Box sx={{ color: "#9CA3AF", display: "flex" }}>{icon}</Box>}
-          <Typography sx={{ fontWeight: 600, fontSize: "0.8rem", color: "#1F2937" }}>
+          <Typography component="div" sx={{ fontWeight: 600, fontSize: "0.8rem", color: "#1F2937" }}>
             {title}
           </Typography>
         </Box>
